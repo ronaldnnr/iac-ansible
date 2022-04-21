@@ -1,0 +1,3 @@
+---
+# defaults file for terraform
+tf_version: '0.11.7'

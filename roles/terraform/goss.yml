@@ -1,0 +1,5 @@
+---
+
+  file:
+    /usr/bin/terraform:
+      exists: true

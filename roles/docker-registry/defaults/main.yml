@@ -1,0 +1,14 @@
+---
+
+docker_registry_security: false
+docker_registry_data_dir: /data
+
+docker_registry_cmd: "docker run -d -p 127.0.0.1:5000:5000 --name registry --net=bridge --privileged=true --restart=always --memory=\"1024m\" -e \"REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/registry\" -v {{ docker_registry_data_dir }}:/registry:rw registry:2"
+docker_registry_nginx_cmd: "docker run -d -p 0.0.0.0:80:80 --name www-registry --net=bridge --privileged=true --restart=always --memory=\"512m\" --link=\"registry:registry\" -v /var/log/nginx/:/var/log/nginx:rw -v /etc/nginx/conf.d:/etc/nginx/conf.d:ro -v /etc/nginx/certs:/etc/nginx/certs:ro nginx:latest"
+
+
+docker_registry_users:
+  - username: docker
+    password: changeit
+  - username: admin
+    password: pewpewpew

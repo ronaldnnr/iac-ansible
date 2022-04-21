@@ -1,0 +1,23 @@
+---
+  package:
+    filebeat:
+      installed: true
+
+  file:
+    /etc/filebeat:
+      exists: true
+      filetype: directory
+    /etc/filebeat/fields.yml:
+      exists: true
+      filetype: file
+    /etc/filebeat/filebeat.reference.yml:
+      exists: true
+      filetype: file
+    /etc/filebeat/filebeat.yml:
+      exists: true
+      filetype: file
+
+  service:
+    filebeat:
+      enabled: yes
+      running: yes

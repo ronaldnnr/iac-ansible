@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+
+# Request
+export EASYRSA_REQ_COUNTRY="{{ openvpn_key_country }}"
+export EASYRSA_REQ_PROVINCE="{{ openvpn_key_province }}"
+export EASYRSA_REQ_CITY="{{ openvpn_key_city }}"
+export EASYRSA_REQ_ORG="{{ openvpn_key_org }}"
+export EASYRSA_REQ_EMAIL="{{ openvpn_key_email}}"
+export EASYRSA_REQ_OU="AWS"
+export EASYRSA_REQ_CN="{{ openvpn_key_org }}"
+
+# Diretório das chaves
+export EASYRSA_PKI="/etc/openvpn/keys/"
+
+# Easy-RSA
+export EASYRSA_CA_EXPIRE="3650"
+export EASYRSA_KEY_SIZE="2048"
+export EASYRSA_DN="org"

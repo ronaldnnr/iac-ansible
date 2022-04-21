@@ -1,0 +1,86 @@
+---
+# tasks file for consul
+
+  - name: Install consul dependencies
+    package:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - unzip
+    tags:
+      - consul
+
+  - name: Download and extract Consul
+    unarchive:
+      src: "{{ consul_download_url }}"
+      remote_src: yes
+      dest: "{{ consul_binary_path }}"
+      mode: 0755
+      owner: root
+      group: root
+    tags:
+      - consul
+
+  - name: Create Consul group.
+    group:
+      name: "{{ consul_group|lower }}"
+    tags:
+      - consul
+
+  - name: Create Consul user
+    user:
+      name: "{{ consul_user|lower }}"
+      group: "{{ consul_group|lower }}"
+    tags:
+      - consul
+
+  - name: Create Consul ConfigDir and DataDir
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ consul_user|lower }}"
+      group: "{{ consul_group|lower }}"
+      mode: 0740
+    with_items:
+      - "{{ consul_config_dir|lower }}"
+      - "{{ consul_data_dir|lower }}"
+    tags:
+      - consul
+
+  - name: Create Consul config file
+    template:
+      src: consul-conf.json.j2
+      dest: "{{ consul_config_dir|lower }}/consul-conf.json"
+      owner: "{{ consul_user|lower }}"
+      group: "{{ consul_group|lower }}"
+      mode: 0640
+    notify:
+      - restart consul
+    tags:
+      - consul
+
+  - name: Create ACL settings
+    template:
+      src: consul-acl.json.j2
+      dest: "{{ consul_config_dir|lower }}/consul-acl.json"
+      owner: "{{ consul_user|lower }}"
+      group: "{{ consul_group|lower }}"
+      mode: 0640
+    when: enable_acl == "true"
+    notify:
+      - restart consul
+    tags:
+      - consul
+
+  - name: Setup Consul Service
+    template:
+      src: consul.{{ ansible_service_mgr }}.j2
+      dest: "{{ (ansible_service_mgr == 'systemd') | ternary('/etc/systemd/system/consul.service', '/etc/init.d/consul') }}"
+      owner: root
+      group: root
+      mode: "{{ (ansible_service_mgr == 'systemd') | ternary('0644', '0755') }}"
+    register: consul_service
+    notify:
+      - restart consul
+    tags:
+      - consul

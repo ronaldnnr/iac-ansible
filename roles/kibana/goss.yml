@@ -1,0 +1,29 @@
+---
+  file:
+    /etc/kibana/kibana.yml:
+      exists: true
+
+  port:
+    tcp:5601:
+      listening: true
+      ip:
+        - 0.0.0.0
+
+  service:
+    kibana:
+      running: true
+      enabled: true
+    
+  package:
+    kibana:
+      installed: true
+
+  file:
+    {{ if eq .Vars.ansible_facts.ansible_os_family "RedHat" }}
+    /etc/java/java.conf:
+      exists: true
+    {{ end }}
+    {{ if eq .Vars.ansible_facts.ansible_os_family "Debian" }}
+    /etc/java-8-openjdk/jvm-amd64.cfg:
+      exists: true
+    {{ end }}

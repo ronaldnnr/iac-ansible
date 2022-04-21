@@ -1,0 +1,31 @@
+---
+
+  - name: common
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/common/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: tomcat
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/tomcat/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: jetty
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/jetty/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: wildfly
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/wildfly/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: nginx
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/nginx/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: php-fpm
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/php-fpm/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: java
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/java/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: zabbix-agent
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/zabbix-agent/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: app_java
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/app_java/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: filebeat
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/filebeat/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7

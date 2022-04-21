@@ -1,0 +1,40 @@
+---
+
+  - name: Install nfs server
+    apt:
+      name: nfs-kernel-server
+      state: present
+    tags: nfs_server
+
+  - name: Install ufw
+    apt:
+      name: ufw
+      state: present
+    tags: nfs_server
+
+  - name: Create folders to export
+    file:
+      path: "{{nfs_folder}}"
+      state: directory
+      owner: nobody
+      group: nogroup
+      recurse: yes
+    tags: nfs_server
+
+  - name: Export folders
+    template:
+      src: exports.j2
+      dest: /etc/exports
+    notify: restart nfs_server
+    tags: nfs_server
+
+  - name: Adjust firewall
+    ufw:
+      rule: allow
+      from_ip: "{{ network_cidr }}"
+      port: "{{ item }}"
+      state: enabled
+    with_items:
+      - 2049
+      - 22
+    tags: nfs_server

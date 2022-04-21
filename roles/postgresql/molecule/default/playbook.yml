@@ -1,0 +1,40 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  vars:
+    postgresql_databases:
+      - name: example
+    postgresql_users:
+      - name: jdoe
+        password: insecure
+    postgresql_hba_entries:
+      - {type: local, database: all, user: postgres, auth_method: peer}
+      - {type: local, database: all, user: all, auth_method: md5}
+      - {type: host, database: all, user: all, address: '127.0.0.1/32', auth_method: md5}
+      - {type: host, database: all, user: all, address: '::1/128', auth_method: md5}
+    postgresql_version: "11"
+    postgresql_data_dir: "/var/lib/postgresql/{{ postgresql_version }}/main"
+    postgresql_bin_path: "/usr/lib/postgresql/{{ postgresql_version }}/bin"
+    postgresql_config_path: "/etc/postgresql/{{ postgresql_version }}/main"
+    postgresql_daemon: postgresql
+    postgresql_packages:
+      - postgresql-{{ postgresql_version }}
+      - postgresql-contrib
+      - libpq-dev
+
+  pre_tasks:
+    - name: Update apt cache.
+      apt: update_cache=true cache_valid_time=600
+      when: ansible_os_family == 'Debian'
+
+  roles:
+    - role: postgresql
+
+  post_tasks:
+    - name: Verify postgres is running.
+      command: "{{ postgresql_bin_path }}/pg_ctl -D {{ postgresql_data_dir }} status"
+      changed_when: false
+      become: true
+      become_user: postgres

@@ -1,0 +1,28 @@
+---
+file:
+  /etc/openvpn/keys:
+    exists: true
+    owner: root
+    group: root
+    mode: "0700"
+    filetype: directory
+  /etc/openvpn/client.conf.sample:
+    exists: true
+    owner: root
+    group: root
+    mode: "0600"
+  /etc/openvpn/server.conf:
+    exists: true
+    owner: root
+    group: root
+    mode: "0600"
+  /etc/openvpn/vars:
+    exists: true
+    owner: root
+    group: root
+    mode: "0600"
+
+service:
+  openvpn@server:
+    enabled: true
+    running: true

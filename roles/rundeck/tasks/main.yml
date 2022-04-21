@@ -1,0 +1,7 @@
+---
+
+  - import_tasks: rundeck.redhat.yml
+    when: ansible_os_family == "RedHat"
+
+  - import_tasks: rundeck.ubuntu.yml
+    when: ansible_os_family == "Debian"

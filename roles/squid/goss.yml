@@ -1,0 +1,9 @@
+---
+
+  package:
+    squid:
+      installed: true
+
+  process:
+    squid:
+      running: true

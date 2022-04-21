@@ -1,0 +1,5 @@
+---
+  - name: Includ tasks for nfs_client.ubuntu.yml
+    include_tasks: nfs_client.ubuntu.yml
+    when:
+      ansible_os_family == "RedHat"

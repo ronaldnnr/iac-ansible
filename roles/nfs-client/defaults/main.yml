@@ -1,0 +1,4 @@
+---
+  nfs_client_folder: "/mnt/nfs/var/nfs/software"
+  nfs_server_ip: "10.10.0.2"
+  nfs_server_folder: "/var/nfs/software"

@@ -1,0 +1,21 @@
+---
+command:
+  # Check if PostgreSQL client is installed
+  psql --version:
+    exit-status: 0
+    stdout:
+      - "/psql .PostgreSQL. .*/"
+
+  # Check if database was created
+  PGPASSWORD=insecure psql -d example -U jdoe -c "\dt":
+    exit-status: 0
+
+  # Check if PostgreSQL server is installed and running
+  PGPASSWORD=insecure psql -d example -U jdoe -c "SELECT version();":
+    exit-status: 0
+    stdout:
+      - "/(.|\n)*PostgreSQL (.\n)*/"
+
+user:
+  postgres:
+    exists: true

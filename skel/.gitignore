@@ -1,0 +1,7 @@
+*.retry
+*.swp
+ssh-*.cfg
+localhost
+roles/*
+hosts*
+.git

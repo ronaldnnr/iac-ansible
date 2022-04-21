@@ -1,0 +1,39 @@
+---
+- name: Configure NAT masquerading to the routed network
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    destination: "{{ openvpn_route_network }}"
+    jump: MASQUERADE
+    comment: NAT masquerading for OpenVPN network
+
+- name: Configure NAT masquerading to extra pushed routes
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    destination: "{{ item }}"
+    jump: MASQUERADE
+    comment: NAT masquerading to extra pushed routes
+  loop: "{{ openvpn_push_extra_cidrs }}"
+
+- name: Ensure NAT masquerading command is in rc.local (VPC network)
+  lineinfile:
+    path: /etc/rc.local
+    line: "/sbin/iptables -t nat -I POSTROUTING -d {{ openvpn_route_network }} -j MASQUERADE"
+    state: present
+
+- name: Ensure NAT masquerading commands is in rc.local (extra routes)
+  lineinfile:
+    path: /etc/rc.local
+    line: "/sbin/iptables -t nat -I POSTROUTING -d {{ item }} -j MASQUERADE"
+    state: present
+  loop: "{{ openvpn_push_extra_cidrs }}"
+
+- name: Enable IPv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_file: /etc/sysctl.d/10-ansible-openvpn.conf
+    sysctl_set: true
+    reload: true
+    state: present

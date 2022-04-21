@@ -1,0 +1,42 @@
+---
+- name: Include OS-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution_release }}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+  tags:
+    - mongodb:setup
+    - mongodb:configure
+
+- name: Include setup tasks (Debian-like)
+  import_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+  tags: mongodb:setup
+
+- name: Ensure data directory exists
+  file:
+    path: "{{ mongodb_storage_dbpath }}"
+    state: directory
+    owner: mongodb
+    group: mongodb
+    mode: 0755
+  notify: Restart MongoDB service
+  tags: mongodb:configure
+
+- name: Configure mongod.conf
+  template:
+    src: mongod.conf.j2
+    dest: /etc/mongod.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart MongoDB service
+  tags: mongodb:configure
+
+- name: Enable and start service
+  service:
+    name: mongod
+    state: started
+    enabled: yes
+  tags: mongodb:service

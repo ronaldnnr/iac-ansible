@@ -1,0 +1,14 @@
+---
+- name: Install vpnuser.sh
+  copy:
+    src: vpnuser.sh
+    dest: /usr/local/bin/vpnuser.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Link vpnuser.sh to /usr/bin
+  file:
+    src: /usr/local/bin/vpnuser.sh
+    dest: /usr/bin/vpnuser
+    state: link

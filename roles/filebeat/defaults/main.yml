@@ -1,0 +1,52 @@
+---
+
+filebeat_version: 6.2.4
+filebeat_output: elasticsearch
+
+es_basic_auth: false
+es_username: elastic
+es_password: elastic
+es_protocol: https
+
+logstash_use_ssl: false
+logstash_cert_auth: /etc/pki/tls/certs/cert.crt
+logstash_cert_file: /etc/pki/client/cert.pem
+logstash_cert_key: /etc/pki/client/cert.key
+
+filebeat_kibana_hostname: ""
+
+output_hosts:
+  elasticsearch:
+    - 127.0.0.1
+  logstash:
+    - 127.0.0.1
+
+filebeat_fields:
+  environment: "staging"
+  filebeat: "true"
+
+filebeat_prospectors:
+  system:
+    log_type: log
+    paths:
+      - /var/log/messages
+      - /var/log/secure
+      - /var/log/cron
+      - /var/log/*.log
+      - /var/log/dmesg
+      - /var/log/tuned/tuned.log
+  nginx:
+    log_type: log
+    paths:
+      - /var/log/nginx/*.log
+  filebeat:
+    log_type: log
+    paths:
+      - /var/log/filebeat/*.log
+  apps:
+    log_type: log
+    paths:
+      - /data/logs/*.log
+
+filebeat_modules:
+  - disabled

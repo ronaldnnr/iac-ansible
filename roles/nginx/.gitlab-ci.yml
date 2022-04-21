@@ -1,0 +1,38 @@
+image: tmaier/docker-compose:latest
+
+services:
+  - docker:dind
+
+stages:
+  - centos6
+  - centos7
+  - debian9
+
+.test-template: &test-template
+  script:
+    - docker-compose up -d $DISTRO
+    - docker-compose exec -T $DISTRO /bin/bash -lc "ln -nfs roles/test/*.yml ."
+    - docker-compose exec -T $DISTRO /bin/bash -lc "test -f requirements.yml && ansible-galaxy install -r requirements.yml -p roles || true"
+    - docker-compose exec -T $DISTRO /bin/bash -lc "ansible-playbook -i localhost, tests.yml -c local"
+    - docker-compose exec -T $DISTRO /bin/bash -lc "ansible -i localhost, -c local all -m setup --tree . &>/dev/null"
+    - docker-compose exec -T $DISTRO /bin/bash -lc "sleep 60"
+    - docker-compose exec -T $DISTRO /bin/bash -lc "goss --vars localhost -g goss.yml validate"
+    - docker-compose stop $DISTRO
+
+centos6:
+  <<: *test-template
+  stage: centos6
+  variables:
+    DISTRO: centos6
+
+centos7:
+  <<: *test-template
+  stage: centos7
+  variables:
+    DISTRO: centos7
+
+debian9:
+  <<: *test-template
+  stage: debian9
+  variables:
+    DISTRO: debian9

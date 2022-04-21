@@ -1,0 +1,37 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANT_API_VERSION = 2
+
+Vagrant.configure(VAGRANT_API_VERSION) do |config|
+  config.ssh.insert_key = false
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1048
+    v.cpus = 1
+  end
+
+  config.vm.define 'kubemaster1' do |kubemaster1|
+    kubemaster1.vm.box = 'centos/7'
+    kubemaster1.vm.hostname = 'kubemaster1'
+    kubemaster1.vm.network "private_network",  ip: "192.168.56.11"
+  end
+
+  config.vm.define 'kubemaster2' do |kubemaster2|
+    kubemaster2.vm.box = 'centos/7'
+    kubemaster2.vm.hostname = 'kubemaster2'
+    kubemaster2.vm.network "private_network",  ip: "192.168.56.12"
+  end
+
+  config.vm.define 'kubemaster3' do |kubemaster3|
+    kubemaster3.vm.box = 'centos/7'
+    kubemaster3.vm.hostname = 'kubemaster3'
+    kubemaster3.vm.network "private_network",  ip: "192.168.56.13"
+  end
+end
+

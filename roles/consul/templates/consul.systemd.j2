@@ -1,0 +1,16 @@
+[Unit]
+Description=consul server
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+User={{ consul_user }}
+Group={{ consul_group }}
+EnvironmentFile=-/etc/default/consul
+Restart=on-failure
+ExecStart={{ consul_binary_path }}consul agent $OPTIONS -config-dir={{ consul_config_dir }}
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target

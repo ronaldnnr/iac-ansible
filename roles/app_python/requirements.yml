@@ -1,0 +1,13 @@
+---
+
+  - name: pyenv
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/pyenv/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: nginx
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/nginx/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: php-fpm
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/php-fpm/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: supervisord
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/supervisord/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7

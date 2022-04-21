@@ -1,0 +1,16 @@
+---
+port:
+  tcp:19999:
+    listening: true
+    ip:
+      - 0.0.0.0
+  
+service:
+  netdata:
+    running: true
+    enabled: true
+  
+http:
+  http://localhost:19999:
+    status: 200
+    timeout: 3200

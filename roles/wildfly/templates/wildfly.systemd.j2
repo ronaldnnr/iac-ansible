@@ -1,0 +1,12 @@
+[Unit]
+Description=WildFly application server
+After=network.target
+
+[Service]
+Type=simple
+User={{ wildfly_user }}
+Group={{ wildfly_group }}
+ExecStart={{ wildfly_dest }}/wildfly/bin/standalone.sh -b 0.0.0.0
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+---
+
+tomcat_version: 7.0.82
+tomcat_major: "{{ tomcat_version.split('.')[0] }}"
+
+tomcat_fullname: apache-tomcat-{{ tomcat_version }}
+tomcat_basepath: tomcat-{{ tomcat_major }}/v{{ tomcat_version }}/bin/{{ tomcat_fullname }}.tar.gz
+tomcat_url:  https://archive.apache.org/dist/tomcat/{{ tomcat_basepath }}
+tomcat_dest: /opt
+
+tomcat_webapps_path: /webapps
+
+tomcat_catalina_options: -Xms512M -Xmx1024M -server -XX:+UseParallelGC
+
+tomcat_enable_proxy: true

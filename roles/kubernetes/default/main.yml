@@ -1,0 +1,11 @@
+kube_one_master: 
+kube_multi_master:
+kube_node_ip: "{{ ansible_eth0.ipv4.address }}"
+kube_master1_ip:
+kube_master2_ip:
+kube_master3_ip:
+kube_master_balancer_ip:
+kube_domain:
+kube_master1:
+kube_master2:
+kube_master3:

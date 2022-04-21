@@ -1,0 +1,10 @@
+---
+# Arquivo de handlers da role.
+
+- name: reload systemd
+  command: systemctl daemon-reload
+- name: restart zookeeper
+  systemd:
+    name: "{{zookeeper.service_name}}"
+    state: restarted
+

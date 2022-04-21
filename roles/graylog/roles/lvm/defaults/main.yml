@@ -1,0 +1,35 @@
+---
+lvm_manage_disks: false
+
+# Exemplos:
+#
+# lvm_pv_devices:
+#   - /dev/sdb
+#
+# lvm_pv_devices:
+#   - /dev/sdd
+#   - /dev/sde
+lvm_pv_devices: []
+lvm_pv_options: ""
+
+# Exemplo:
+#
+# lvm_vg_name: vg-myapp
+lvm_vg_name: ""
+lvm_vg_options: ""
+
+# Exemplo:
+#
+# lvm_lv_name: lv-myapp-data
+lvm_lv_name: ""
+lvm_lv_size: +100%FREE
+lvm_lv_resizefs: true
+
+lvm_format_disk: true
+
+lvm_format_fstype: ext4
+
+# Exemplo:
+#
+# lvm_mount_path: /var/myapp-data
+lvm_mount_path: ""

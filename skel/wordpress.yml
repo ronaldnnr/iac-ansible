@@ -1,0 +1,19 @@
+---
+  - name: Wordpress install playbook
+    hosts: "{{ target | default('all', true) }}"
+    become: yes
+    serial: 1
+
+    vars:
+      nginx_server_root: /var/www/html/wordpress
+      nginx_php_enabled: true
+
+      mysql_socket_enabled: false
+
+    vars_files:
+      - "{{ env | default('group_vars/all', true) }}"
+
+    roles:
+      - common
+      - wordpress
+...

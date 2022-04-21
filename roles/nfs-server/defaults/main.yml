@@ -1,0 +1,11 @@
+---
+
+
+  packages:
+    - firewalld
+
+
+
+
+  network_cidr: "10.10.0.0/24"
+  nfs_folder: "/var/nfs/software"

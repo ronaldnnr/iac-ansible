@@ -1,0 +1,7 @@
+---
+# handlers file for sftp
+
+- name: reload_sshd
+  service:
+    name: sshd
+    state: reloaded

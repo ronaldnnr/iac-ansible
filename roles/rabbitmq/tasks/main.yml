@@ -1,0 +1,42 @@
+---
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: rabbitmq:setup
+
+- name: Include Debian setup tasks
+  include: setup-Debian.yml
+  when: ansible_os_family == "Debian"
+  tags: rabbitmq:setup
+
+- name: Ensure RabbitMQ Server is installed
+  package:
+    name: rabbitmq-server
+    state: present
+  tags: rabbitmq:setup
+
+- name: Import configuration tasks
+  import_tasks: configure.yml
+  tags: rabbitmq:configure
+
+- name: Import Erlang cookie tasks
+  import_tasks: erlang-cookie.yml
+  tags: rabbitmq:erlang-cookie
+
+- name: Ensure service is enabled and running
+  service:
+    name: rabbitmq-server
+    state: started
+    enabled: true
+  tags:
+    - rabbitmq:setup
+    - rabbitmq:configure
+    - rabbitmq:cluster
+
+- name: Import access control tasks
+  import_tasks: access-control.yml
+  tags: rabbitmq:access-control
+
+- name: Import cluster tasks
+  import_tasks: cluster.yml
+  when: rabbitmq_enable_cluster and rabbitmq_erlang_cookie
+  tags: rabbitmq:cluster

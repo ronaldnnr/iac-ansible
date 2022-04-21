@@ -1,0 +1,21 @@
+---
+  service:
+    consul:
+      enabled: true
+      running: true
+
+  file:
+    /etc/consul:
+      filetype: directory
+      exists: true
+    /opt/consul/data:
+      filetype: directory
+      exists: true
+    /etc/consul/consul-conf.json:
+      exists: true
+
+  user:
+    consul:
+      exists: true
+      groups:
+        - consul

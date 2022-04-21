@@ -1,0 +1,12 @@
+---
+  logstash_version: 5.x
+  Xmx_size: 1g
+  Xms_size: 1g
+  java_packages:
+    RedHat:
+      - java-{{ RedHat_Version }}-openjdk-devel.x86_64
+    Debian:
+      - openjdk-{{ Debian_Version }}-jdk
+  
+  RedHat_Version: 1.8.0
+  Debian_Version: 8

@@ -1,0 +1,5 @@
+---
+  - name: Includ tasks for nfsserver.ubuntu.yml
+    include_tasks: nfsserver.ubuntu.yml
+    when:
+      ansible_os_family == "Debian"

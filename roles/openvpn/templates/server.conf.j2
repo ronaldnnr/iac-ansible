@@ -1,0 +1,53 @@
+# {{ ansible_managed }}
+
+cd /etc/openvpn
+
+port {{ openvpn_server_port }}
+proto {{ openvpn_server_protocol }}
+dev tun0
+
+ca   keys/ca.crt
+cert keys/issued/server.crt
+key  keys/private/server.key
+dh   keys/dh.pem
+
+tls-auth keys/ta.key 0
+
+server {{ openvpn_server_network }} {{ openvpn_server_netmask }}
+
+ifconfig-pool-persist ipp.txt
+
+plugin /usr/lib64/openvpn/plugins/openvpn-plugin-auth-pam.so "login login USERNAME password PASSWORD"
+
+# Rotas da VPC
+push "route {{ openvpn_route_network_mask }}"
+
+# Rotas extras
+{% for cidr in openvpn_push_extra_cidrs %}
+push "route {{ cidr | ipaddr('network') or cidr | ipaddr('address') }} {{ cidr | ipaddr('netmask') }}"
+{% endfor %}
+
+{% if openvpn_duplicate_cn %}
+duplicate-cn
+{% endif %}
+
+keepalive {{ openvpn_keepalive }}
+
+cipher {{ openvpn_cipher }}
+
+{% if openvpn_comp_lzo %}
+comp-lzo
+{% endif %}
+
+persist-key
+persist-tun
+
+status openvpn-status.log
+
+log /var/log/openvpn.log
+
+# 0 is silent, except for fatal errors, 4 is reasonable for general usage
+# 5 and 6 can help to debug connection problems and 9 is extremely verbose
+verb 3
+
+mute 20

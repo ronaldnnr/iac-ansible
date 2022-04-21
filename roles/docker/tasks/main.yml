@@ -1,0 +1,23 @@
+---
+  - name: Install Docker {{ docker_version }} repository
+    yum_repository:
+      name: docker
+      description: Docker Repository
+      baseurl: https://packages.docker.com/{{ docker_version }}/yum/repo/main/centos/7
+      gpgkey: "https://sks-keyservers.net/pks/lookup?op=get&search=0xee6d536cf7dc86e2d7d56f59a178ac6c6238f52e"
+    tags:
+      - docker
+
+  - name: Install Docker {{ docker_version }}
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - docker-engine
+    notify:
+      - restart docker
+    tags:
+      - docker
+
+  - name: Force all notified handlers to run at this point, not waiting for normal sync points
+    meta: flush_handlers

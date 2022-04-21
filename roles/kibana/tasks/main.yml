@@ -1,0 +1,89 @@
+---
+  - name: Installing JDK (RedHat)
+    yum:
+      name: "{{ item }}"
+    with_items:
+      - "{{ java_packages[ansible_os_family] }}"
+    when:
+      ansible_os_family == "RedHat"
+    tags: kibana
+
+  - name: Installing JDK (Debian)
+    apt:
+      name: "{{ item }}"
+    with_items:
+      - "{{ java_packages[ansible_os_family] }}"
+    when:
+      ansible_os_family == "Debian"
+    tags: kibana
+
+  - name: Install apt-transport-https
+    apt:
+      name: apt-transport-https
+      state: latest
+    when:
+      - ansible_os_family == "Debian"
+    tags: kibana
+
+  - name: Install Elastic.co repository public key
+    apt_key:
+      url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      state: present
+    when:
+      ansible_os_family == "Debian"
+    tags: kibana
+
+  - name: Installing Elastic.co repository
+    apt_repository:
+      repo: deb https://artifacts.elastic.co/packages/{{ kibana_version }}/apt stable main
+      filename: kibana
+      state: present
+      update_cache: yes
+    when:
+      ansible_os_family == "Debian"
+    tags: kibana
+
+  - name: Install Elastic.co repository
+    yum_repository:
+      name: kibana
+      description: Repository elastic.co for Enterprise Linux {{ ansible_distribution_version[:1] }}
+      baseurl: https://artifacts.elastic.co/packages/{{ kibana_version }}/yum
+      gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      gpgcheck: yes
+    when:
+      ansible_os_family == "RedHat"
+    tags: kibana
+
+  - name: Install Kibana package (Debian)
+    apt:
+      name: kibana
+      state: present
+      update_cache: yes
+    when:
+        ansible_os_family == "Debian"
+    tags: kibana
+
+  - name: Install Kibana package (RedHat)
+    yum:
+      name: kibana
+      state: present
+      update_cache: yes
+    when:
+      ansible_os_family == "RedHat"
+    tags: kibana
+
+  - name: Copy template configuration jvm.options
+    template:
+      src: jvm.options.j2
+      dest: /etc/kibana/jvm.options
+    notify:
+      - restart kibana
+    tags: kibana
+
+  - name: Copy template configuration kibana.yml
+    template:
+      src: kibana.yml.j2
+      dest: /etc/kibana/kibana.yml
+    notify:
+      - restart kibana
+    tags: kibana

@@ -1,0 +1,26 @@
+---
+
+  package:
+    nginx:
+      installed: true
+
+  port:
+    tcp:80:
+      listening: true
+      ip:
+        - 0.0.0.0
+
+  http:
+    http://localhost/nginx_status:
+      status: 200
+      no-follow-redirects: false
+      allow-insecure: true
+
+  service:
+    nginx:
+      enabled: true
+      running: true
+
+  file:
+    /etc/nginx/conf.d/proxy_pass.conf:
+      exists: true

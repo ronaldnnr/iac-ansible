@@ -1,0 +1,16 @@
+service:
+  gogs:
+    enabled: true
+    running: true
+user:
+  git:
+    exists: true
+    groups:
+    - git
+    home: /home/git
+group:
+  git:
+    exists: true
+process:
+  gogs:
+    running: true

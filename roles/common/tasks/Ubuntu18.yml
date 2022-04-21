@@ -1,0 +1,11 @@
+---
+  - name: Update cache and packages ({{ ansible_distribution }})
+    apt:
+      update_cache: yes
+      upgrade: full
+    tags: common
+
+  - name: Set NTP Service name for restarting
+    set_fact: 
+      ntp_service: ntp
+...

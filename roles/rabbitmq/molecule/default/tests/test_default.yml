@@ -1,0 +1,24 @@
+---
+package:
+  erlang-base:
+    installed: true
+  rabbitmq-server:
+    installed: true
+
+service:
+  rabbitmq-server:
+    enabled: true
+    running: true
+
+user:
+  rabbitmq:
+    exists: true
+    groups:
+      - rabbitmq
+
+file:
+  /var/lib/rabbitmq/.erlang.cookie:
+    exists: true
+    owner: rabbitmq
+    group: rabbitmq
+    mode: "0400"

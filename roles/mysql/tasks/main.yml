@@ -1,0 +1,7 @@
+---
+
+  - import_tasks: mysql.centos.yml
+    when: ansible_distribution == "CentOS"
+
+  - import_tasks: mysql.debian.yml
+    when: ansible_distribution == "Debian"

@@ -1,0 +1,12 @@
+---
+  - name: Including tasks for {{ ansible_distribution }} {{ ansible_distribution_major_version }}
+    include_tasks: "{{ ansible_distribution }}{{ ansible_distribution_major_version }}.yml"
+    tags: bind
+
+  - name: Copy bind conf
+    template:
+      src: "named.conf.j2"
+      dest: /etc/named.conf
+    notify:
+      - restart bind
+    tags: bind

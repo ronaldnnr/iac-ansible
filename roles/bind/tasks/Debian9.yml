@@ -1,0 +1,11 @@
+---
+  - name: Install bind9
+    package:
+      name: bind9
+      state: latest
+    tags: bind
+
+  - name: Set Service name for Handlers
+    set_fact:
+      bind_service: bind9
+    tags: bind

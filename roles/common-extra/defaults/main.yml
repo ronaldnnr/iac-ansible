@@ -1,0 +1,7 @@
+---
+packages:
+  Debian:
+    - openssh-server
+  RedHat:
+    - openssh-server
+...

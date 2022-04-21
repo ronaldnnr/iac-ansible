@@ -1,0 +1,5 @@
+---
+- name: Restart Graylog server
+  service:
+    name: graylog-server
+    state: restarted

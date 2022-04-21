@@ -1,0 +1,52 @@
+---
+
+  - name: Install rundeck repository
+    yum:
+      name: http://repo.rundeck.org/latest.rpm
+    tags: rundeck
+
+  - name: Install java 1.8 and rundeck
+    yum:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - java-1.8.0-openjdk
+      - rundeck
+    tags: rundeck
+
+  - name: Configure java version to 1.8
+    alternatives:
+      name: java
+      path: "{{ item }}"
+    with_fileglob:
+      - /usr/lib/jvm/jre-1.8.0-openjdk-*.x86_64/bin/java
+    notify: restart rundeck
+    tags: rundeck
+
+  - name: Configure rundeck framework
+    template:
+      src: etc/rundeck/framework.properties
+      dest: /etc/rundeck/framework.properties
+    notify: restart rundeck
+    tags: rundeck
+
+  - name: Configure rundeck config
+    template:
+      src: etc/rundeck/rundeck-config.properties
+      dest: /etc/rundeck/rundeck-config.properties
+    notify: restart rundeck
+    tags: rundeck
+
+  - name: Configure rundeck default aclpolicy
+    template:
+      src: etc/rundeck/readonly.aclpolicy
+      dest: /etc/rundeck/readonly.aclpolicy
+    notify: restart rundeck
+    tags: rundeck, aclpolicy
+
+  - name: Configure rundeck default group
+    template:
+      src: var/lib/rundeck/exp/webapp/WEB-INF/web.xml
+      dest: /var/lib/rundeck/exp/webapp/WEB-INF/web.xml
+    notify: restart rundeck
+    tags: rundeck, aclpolicy

@@ -1,0 +1,4 @@
+---
+mongodb_apt_repo:
+  "3.6": "deb https://repo.mongodb.org/apt/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}/mongodb-org/3.6 multiverse"
+  "4.0": "deb [arch=amd64] https://repo.mongodb.org/apt/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}/mongodb-org/4.0 multiverse"

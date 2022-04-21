@@ -1,0 +1,21 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Tray
+  description: PostgreSQL server for Linux.
+  company: "Leonardo Fernandes Solutions"
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - database
+    - postgresql
+    - postgres
+    - rdbms

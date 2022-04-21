@@ -1,0 +1,31 @@
+[Unit]
+Description=Tomcat
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+WorkingDirectory={{ tomcat_dest }}/tomcat
+
+{% if ansible_distribution == 'Debian' %}
+Environment="JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64"
+{% else %}
+Environment="JAVA_HOME=/usr/lib/jvm/java"
+{% endif %}
+
+Environment="CATALINA_BASE={{ tomcat_dest }}/tomcat"
+Environment="CATALINA_HOME={{ tomcat_dest }}/tomcat"
+
+Environment="CATALINA_OPTS={{ tomcat_catalina_options }}"
+
+ExecStart={{ tomcat_dest }}/tomcat/bin/startup.sh
+ExecStop={{ tomcat_dest }}/tomcat/bin/shutdown.sh
+
+#RestartSec=10
+#Restart=always
+
+[Install]
+WantedBy=multi-user.target

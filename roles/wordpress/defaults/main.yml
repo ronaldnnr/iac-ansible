@@ -1,0 +1,16 @@
+---
+  packages:
+    RedHat: MySQL-python
+    Debian: python-mysqldb
+
+  mysql_service:
+    RedHat: mysqld
+    Debian: mysql
+
+  wordpress_mysql_enabled: true
+
+  wordpress_version: 4.9.4
+  wordpress_database: wpdb
+  wordpress_user: wordpress
+  wordpress_password: wordpress
+  wordpress_host: localhost

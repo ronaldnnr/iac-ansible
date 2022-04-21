@@ -1,0 +1,60 @@
+---
+  - name: Install necessary packages ({{ ansible_os_family }})
+    package:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - "{{ packages[ansible_os_family] }}"
+    when:
+      wordpress_mysql_enabled == true
+    tags: wordpress
+
+  - name: Insure MySQL service is running
+    service:
+      name: "{{ mysql_service[ansible_os_family] }}"
+      state: restarted
+    when:
+      wordpress_mysql_enabled == true
+    tags: wordpress
+
+  - name: Create a database to Wordpress
+    mysql_db:
+      name: wpdb
+    when:
+      wordpress_mysql_enabled == true
+    tags: wordpress
+
+  - name: Create Wordpress user into MySQL
+    mysql_user:
+      name: wordpress
+      password: wordpress
+      priv: "wpdb.*:ALL"
+    when:
+      wordpress_mysql_enabled == true
+    tags: wordpress
+
+  - name: Create some directory if not exist
+    file:
+      path: /var/www/html
+      state: directory
+    tags: wordpress
+
+  - name: Download Wordpress zip file
+    get_url:
+      url: http://wordpress.org/wordpress-{{ wordpress_version }}.tar.gz
+      dest: /var/www/html
+    tags: wordpress
+
+  - name: Unarchive Wordpress files
+    unarchive:
+      src: /var/www/html/wordpress-{{ wordpress_version }}.tar.gz
+      dest: /var/www/html/
+    tags: wordpress
+
+  - name: Copy template wp-config-sample.php template into Wordpress directory
+    template:
+      src: wordpress/wp-config-sample.php.j2
+      dest: /var/www/html/wordpress/wp-config.php
+    when:
+      wordpress_mysql_enabled == true
+    tags: wordpress

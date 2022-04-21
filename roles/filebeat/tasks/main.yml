@@ -1,0 +1,64 @@
+---
+
+  - name: Install filebeat repository (RedHat)
+    yum:
+      name: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-x86_64.rpm
+      state: present
+    when:
+      - ansible_os_family == 'RedHat'
+    tags:
+      - filebeat
+
+  - name: Install filebeat repository (Debian)
+    apt:
+      deb: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-amd64.deb
+      state: present
+    when:
+      - ansible_os_family == 'Debian'
+    tags:
+      - filebeat
+
+  - name: Check if filebeat module exists
+    stat:
+      path: "/etc/filebeat/modules.d/{{ item }}.yml.disabled"
+    with_items:
+      - "{{ filebeat_modules }}"
+    register: filebeat_modules_files
+    tags:
+      - filebeat
+
+  - name: Enable filebeat modules (copy)
+    copy:
+      remote_src: True
+      src: "/etc/filebeat/modules.d/{{ item.item }}.yml.disabled"
+      dest: /etc/filebeat/modules.d/{{ item.item }}.yml
+    with_items:
+      - "{{ filebeat_modules_files.results }}"
+    when:
+      - item.stat.exists
+    notify:
+      - restart filebeat
+    tags:
+      - filebeat
+
+  - name: Enable filebeat modules (cleanup)
+    file:
+      path: "/etc/filebeat/modules.d/{{ item.item }}.yml.disabled"
+      state: absent
+    with_items:
+      - "{{ filebeat_modules_files.results }}"
+    when:
+      - item.stat.exists
+    notify:
+      - restart filebeat
+    tags:
+      - filebeat
+
+  - name: Replace default filebeat.yml
+    template:
+      src: templates/filebeat.yml.j2
+      dest: /etc/filebeat/filebeat.yml
+    notify:
+      - restart filebeat
+    tags:
+      - filebeat

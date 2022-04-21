@@ -1,0 +1,21 @@
+---
+- name: Install APT HTTPS transport package
+  apt:
+    name: apt-transport-https
+    state: present
+  tags: elasticsearch:setup
+
+- name: Add APT repository key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    keyring: /etc/apt/trusted.gpg.d/elasticsearch.gpg
+    state: present
+  tags: elasticsearch:setup
+
+- name: Configure APT repository
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/{{ elasticsearch_version }}/apt stable main"
+    filename: elasticsearch-{{ elasticsearch_version }}
+    state: present
+    update_cache: true
+  tags: elasticsearch:setup

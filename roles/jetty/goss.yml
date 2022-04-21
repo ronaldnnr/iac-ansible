@@ -1,0 +1,24 @@
+---
+  service:
+    jetty:
+      enabled: true
+      running: true
+
+  file:
+    /opt/jetty:
+      filetype: symlink
+      exists: true
+    /etc/default/jetty:
+      exists: true
+
+  user:
+    jetty:
+      exists: true
+      groups:
+        - jetty
+
+  port:
+    tcp:8080:
+      listening: true
+      ip:
+        - 0.0.0.0

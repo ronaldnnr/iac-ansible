@@ -1,0 +1,103 @@
+---
+# tasks file for app_php
+
+  - name: Install base packages
+    package:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - "{{ app_base_packages }}"
+    tags:
+      - app_php
+      - deploy
+
+  - name: Create {{ app_group }} group
+    group:
+      name: "{{ app_group }}"
+      state: present
+    tags:
+      - app_php
+      - deploy
+
+  - name: Create {{ app_user }} username
+    user:
+      name: "{{ app_user }}"
+      group: "{{ app_group }}"
+      createhome: no
+      home: "{{ app_path }}"
+      shell: /bin/bash
+    tags:
+      - app_php
+      - deploy
+
+  - name: Create base directories
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+    with_items:
+      - "{{ app_shared_folders }}"
+    tags:
+      - app_php
+      - deploy
+
+  - name: Check if client key exists
+    stat:
+      path: /etc/.client_key
+    register: client_key
+    tags:
+      - app_php
+      - deploy
+
+  - name: Enable client key for repository
+    file:
+      src: /etc/.client_key
+      dest: "{{ app_path }}/.ssh/id_rsa"
+      state: link
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+    when: client_key.stat.exists == True
+    tags:
+      - app_php
+      - deploy
+
+  - name: Configure application environment variables
+    blockinfile:
+      path: "{{ Debian_package[php_set_version]['destination'] }}"
+      block: |
+        {% for key, value in app_config.items() %}
+        env[{{ key | upper }}] = {{ value }}
+        {% endfor %}
+      marker: "; ANSIBLE MANAGED BLOCK VARIABLES"
+    when:
+      - ansible_os_family == 'Debian'
+    tags:
+      - app_php
+      - deploy
+
+  - name: Configure application environment variables
+    blockinfile:
+      path: "{{ RedHat_package[php_set_version]['destination'] }}"
+      block: |
+        {% for key, value in app_config.items() %}
+        env[{{ key | upper }}] = {{ value }}
+        {% endfor %}
+      marker: "; ANSIBLE MANAGED BLOCK VARIABLES"
+    when:
+      - ansible_os_family == 'RedHat'
+    tags:
+      - app_php
+      - deploy
+
+  - name: Deploy application on {{ app_path }}/app
+    git:
+      repo: "{{ app_repository }}"
+      dest: "{{ app_path }}/app"
+      accept_hostkey: yes
+    become: true
+    become_user: "{{ app_user }}"
+    when: client_key.stat.exists == True
+    tags:
+      - app_php
+      - deploy

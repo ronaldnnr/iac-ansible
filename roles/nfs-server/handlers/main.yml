@@ -1,0 +1,9 @@
+---
+  - name: restart nfs_server
+    service:
+      name: nfs-kernel-server
+      state: restarted
+      enabled: yes
+    when:
+        ansible_os_family == "Debian"
+    tags: nfs_server

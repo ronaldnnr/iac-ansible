@@ -1,0 +1,104 @@
+---
+# tasks file for jetty
+
+  - name: Add {{ jetty_group }} group
+    group:
+      name: "{{ jetty_group }}"
+      state: present
+
+  - name: Add {{ jetty_user }} user
+    user:
+      name: "{{ jetty_user }}"
+      shell: /bin/bash
+      createhome: no
+      home: "{{ jetty_install_path }}/jetty"
+      groups: "{{ jetty_group }}"
+    tags:
+      - jetty
+
+  - name: Create /var/run/jetty with necessary permissions
+    file:
+      path: /var/run/jetty
+      state: directory
+      owner: "{{ jetty_user }}"
+      group: "{{ jetty_group }}"
+    tags:
+      - jetty
+
+  - name: Download e unzip jetty package
+    unarchive:
+      src: http://central.maven.org/maven2/org/eclipse/jetty/jetty-distribution/{{ jetty_version }}/jetty-distribution-{{ jetty_version }}.tar.gz
+      dest: "{{ jetty_install_path }}"
+      remote_src: yes
+      creates: "{{ jetty_install_path }}/jetty-distribution-{{ jetty_version }}"
+      owner: "{{ jetty_user }}"
+      group: "{{ jetty_group }}"
+    notify:
+      - restart jetty
+    tags:
+      - jetty
+
+  - name: Create symbolic link
+    file:
+      src: "{{ jetty_install_path }}/jetty-distribution-{{ jetty_version }}"
+      dest: "{{ jetty_install_path }}/jetty"
+      state: link
+    tags:
+      - jetty
+
+  - name: Set jetty variables
+    template:
+      src: default.j2
+      dest: /etc/default/jetty
+    notify:
+      - restart jetty
+    tags:
+      - jetty
+
+  - name: Install jetty {{ ansible_service_mgr }} script
+    template:
+      src: jetty.systemd.j2
+      dest: /etc/systemd/system/jetty.service
+    notify:
+      - restart jetty
+    when: ansible_service_mgr == 'systemd'
+    tags:
+      - jetty
+
+  - name: Install jetty {{ ansible_service_mgr }} script
+    file:
+      src: "{{ jetty_install_path }}/jetty/bin/jetty.sh"
+      dest: /etc/init.d/jetty
+      state: link
+    notify:
+      - restart jetty
+    when: ansible_service_mgr != 'systemd'
+    tags:
+      - jetty
+
+  - name: Cleanup webapps directory
+    file:
+      path: "{{ jetty_install_path }}/jetty/webapps"
+      state: absent
+    tags:
+      - jetty
+
+  - name: Create {{ jetty_webapps_path }} if not exists
+    file:
+      path: "{{ jetty_webapps_path }}"
+      state: directory
+      owner: "{{ jetty_user }}"
+      group: "{{ jetty_group }}"
+    tags:
+      - jetty
+
+  - name: Create symbolic link for webapps
+    file:
+      src: "{{ jetty_webapps_path }}"
+      dest: "{{ jetty_install_path }}/jetty/webapps"
+      force: yes
+      state: link
+    notify:
+      - fix permissions jetty
+    tags:
+      - jetty

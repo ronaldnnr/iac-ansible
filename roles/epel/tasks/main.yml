@@ -1,0 +1,13 @@
+---
+- name: Ensure EPEL package is installed
+  yum:
+    name: "{{ epel_package_name }}"
+    state: present
+
+- name: Ensure EPEL repository desired state
+  ini_file:
+    path: "{{ epel_repo_file }}"
+    section: epel
+    option: enabled
+    value: "{{ epel_enable_repo | int }}"
+    backup: true

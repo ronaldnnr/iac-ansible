@@ -1,0 +1,22 @@
+---
+apiVersion: kubeadm.k8s.io/v1alpha1
+kind: MasterConfiguration
+etcd:
+  endpoints:
+  - "http://{{etcd_node1_ip}}:2379"
+  - "http://{{etcd_node2_ip}}:2379"
+  - "http://{{etcd_node3_ip}}:2379"
+apiServerCertSANs:
+- "{{kube_master1_ip}}"
+- "{{kube_master2_ip}}"
+- "{{kube_master3_ip}}"
+- "{{kube_master_balancer_ip}}"
+- "{{kube_domain}}"
+- "{{kube_master_balancer_hostname}}"
+- "127.0.0.1"
+token: "9aeb42.99b7540a5833866a"
+tokenTTL: "0s"
+api:
+  advertiseAddress: "{{kube_master_balancer_ip}}"
+networking:
+  podSubnet: 10.244.0.0/16

@@ -1,0 +1,7 @@
+service:
+  sshd:
+    enabled: true
+    running: true
+process:
+  sshd:
+    running: true

@@ -1,0 +1,4 @@
+---
+  package:
+    nodejs:
+      installed: true

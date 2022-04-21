@@ -1,0 +1,5 @@
+---
+  package_type:
+    RedHat: rpm
+    Debian: deb
+  nodejs_version: 8

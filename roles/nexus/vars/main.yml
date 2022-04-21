@@ -1,0 +1,7 @@
+---
+
+OPEN_JDK: java-1.8.0-openjdk.x86_64
+NEXUS_USER: nexus
+NEXUS_GROUP: nexus
+NEXUS_DIRECTORY: /opt/nexus
+NEXUS_DOWNLOAD_URL: https://download.sonatype.com/nexus/3/latest-unix.tar.gz

@@ -1,0 +1,35 @@
+---
+# defaults file for elasticsearch
+
+elasticsearch_version: 7
+
+# Cluster configuration
+elasticsearch_cluster: true
+elasticsearch_minimum_master_nodes: 2
+elasticsearch_network_host: 0.0.0.0
+elasticsearch_http_host: _site_, _local_
+elasticsearch_cluster_name: es-cluster
+elasticsearch_node_name: "{{ ansible_hostname }}"
+elasticsearch_config_dir: /etc/elasticsearch
+elasticsearch_path_log: /var/log/elasticsearch
+elasticsearch_path_data: /data
+
+java_old_version:
+  RedHat:
+    - java-1.7.0-openjdk-devel.x86_64
+  Debian:
+    - openjdk-7-jdk
+
+java_new_version:
+  RedHat:
+    - java-1.8.0-openjdk-devel.x86_64
+  Debian:
+    - openjdk-8-jdk
+
+# Force new java version
+rm_java_old_version: True
+
+# Install java
+java_install : True
+
+## ElasticSearch 7 variables

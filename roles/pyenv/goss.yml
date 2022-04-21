@@ -1,0 +1,10 @@
+---
+  file:
+    /data/shared/pyenv:
+      filetype: directory
+      exists: true
+    /data/shared/pyver:
+      exists: true
+    /data/shared/pyenv/versions/2.7.9:
+      filetype: directory
+      exists: true

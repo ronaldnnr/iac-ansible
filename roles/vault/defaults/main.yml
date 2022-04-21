@@ -1,0 +1,21 @@
+---
+# defaults file for consul
+vault_download_url: "https://releases.hashicorp.com/vault/0.9.5/vault_0.9.5_linux_amd64.zip"
+vault_binary_path: "/usr/local/bin"
+
+backend_vault: "consul"
+vault_user: "vault"
+vault_group: "vault"
+vault_config_dir: "/etc/vault"
+vault_keys_dir: "/opt/vault/keys"
+vault_init: "false"
+vault_ui: "false"
+vault_path: "vault/"
+consul_ip: "{{ ansible_host }}"
+consul_port: "8500"
+vault_cluster_address: "http://{{ ansible_host }}"
+vault_port: "8200"
+consul_acl_master_token: "1234567890"
+default_lease_ttl: "10h"
+max_lease_ttl: "10h"
+raw_storage_endpoint: "true"

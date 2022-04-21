@@ -1,0 +1,71 @@
+---
+
+  - name: Create {{ sonarqube_install_path }}
+    file:
+      path: "{{ sonarqube_install_path }}"
+      state: directory
+    tags:
+      - sonarqube
+
+  - name: Install unzip && java 1.8
+    package:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - unzip
+      - java-1.8.0-openjdk
+    tags:
+      - sonarqube
+
+  - name: Configure java version to 1.8
+    alternatives:
+      name: java
+      path: "{{ item }}"
+    with_fileglob:
+      - /usr/lib/jvm/java-1.8.0-openjdk-*.x86_64/jre/bin/java
+    notify:
+      - restart sonarqube
+    tags:
+      - sonarqube
+
+  - name: Download/Unarchive Sonarqube package
+    unarchive:
+      src:  "{{ sonarqube_url }}"
+      dest: "{{ sonarqube_install_path }}"
+      remote_src: yes
+      creates: "{{ sonarqube_install_path }}/sonarqube-{{ sonarqube_version }}"
+    tags:
+      - sonarqube
+
+  - name: Create symbolic link
+    file:
+      src: "{{ sonarqube_install_path }}/sonarqube-{{ sonarqube_version }}"
+      dest: "{{ sonarqube_install_path }}/sonarqube"
+      state: link
+    tags:
+      - sonarqube
+
+  - name: Create initscript for Sonarqube
+    template:
+      src: sonarqube/bin/sonarqube-initscript
+      dest: "{{ sonarqube_install_path }}/sonarqube/bin/initscript"
+      mode: 0755
+    tags:
+      - sonarqube
+
+  - name: Create symbolic link to initscript
+    file:
+      src: "{{ sonarqube_install_path }}/sonarqube/bin/initscript"
+      dest: /etc/init.d/sonarqube
+      state: link
+    tags:
+      - sonarqube
+
+  - name: Configure Sonarqube
+    template:
+      src: sonarqube/conf/sonar.properties
+      dest: "{{ sonarqube_install_path }}/sonarqube/conf/sonar.properties"
+    notify:
+      - restart sonarqube
+    tags:
+      - sonarqube

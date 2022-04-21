@@ -1,0 +1,7 @@
+include:
+  - project: leo-labs/templates/gitlab-ci
+    ref: v0.2.1
+    file: /ansible/molecule.yml
+
+variables:
+  TEST_DISTROS: ubuntu1604,ubuntu1804

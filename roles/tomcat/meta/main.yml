@@ -1,0 +1,4 @@
+---
+  dependencies:
+    - { role: java, tags: tomcat }
+    - { role: nginx, when: tomcat_enable_proxy, nginx_proxy_port: 8080, nginx_proxy_enabled: true, tags: tomcat }

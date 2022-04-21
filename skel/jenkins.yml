@@ -1,0 +1,17 @@
+---
+  - name: Jenkins install playbook
+    hosts: "{{ target | default('all', true) }}"
+    become: yes
+    serial: 1
+
+    vars:
+      nginx_php_enabled: false
+      nginx_proxy_enabled: true
+      nginx_proxy_port: 8080
+
+    vars_files:
+      - "{{ env | default('group_vars/all', true) }}"
+
+    roles:
+      - common
+      - jenkins

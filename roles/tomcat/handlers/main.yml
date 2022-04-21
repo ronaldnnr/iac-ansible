@@ -1,0 +1,11 @@
+---
+  - name: restart tomcat
+    service:
+      name: tomcat
+      state: restarted
+      enabled: yes
+
+  - name: fix permissions tomcat
+    command: "chown -R tomcat:tomcat {{ item }}"
+    with_items:
+      - "{{ tomcat_dest }}/tomcat/webapps/"

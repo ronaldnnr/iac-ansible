@@ -1,0 +1,63 @@
+---
+
+- include: debian.deps.yaml
+  when: ansible_pkg_mgr == 'apt'
+
+- include: centos.deps.yaml
+  when: ansible_pkg_mgr == 'yum'
+
+- name: Create a working directory
+  file:
+    path:  /tmp/build_ruby
+    state: directory
+    mode: 'u+rwx'
+  tags: ruby
+
+- name: Download Ruby
+  get_url:
+    url:  https://cache.ruby-lang.org/pub/ruby/2.4/ruby-{{ ruby_version }}.tar.gz
+    dest: /tmp/build_ruby/ruby-{{ ruby_version }}.tar.gz
+  tags: ruby
+
+- name: Unpack Ruby
+  unarchive:
+    src: /tmp/build_ruby/ruby-{{ ruby_version }}.tar.gz
+    dest: /tmp/build_ruby/
+    remote_src: yes
+  tags: ruby
+
+- name: Build ruby
+  command: >
+    {{ item }}
+    chdir=/tmp/build_ruby/ruby-{{ ruby_version }}
+    creates=/usr/local/bin/ruby
+  with_items:
+    - ./configure --enable-shared
+    - make
+    - make install
+  tags: ruby
+
+- name: Add ruby symlinks
+  file:
+    src: "/usr/local/bin/{{ item }}"
+    dest: "/usr/bin/{{ item }}"
+    state: link
+    force: yes
+  with_items:
+    - erb
+    - gem
+    - irb
+    - rake
+    - rdoc
+    - ruby
+  tags: ruby
+
+- name: Remove the working directory
+  file:
+    path:  /tmp/build_ruby
+    state: absent
+  tags: ruby
+
+- name: Install bundler
+  shell: gem install bundler
+  tags: ruby

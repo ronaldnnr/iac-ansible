@@ -1,0 +1,18 @@
+---
+# APT - Erlang
+
+rabbitmq_erlang_apt_repo_line: >-
+  deb http://dl.bintray.com/rabbitmq-erlang/{{ ansible_os_family | lower }} {{ ansible_distribution_release | lower }} erlang-{{ rabbitmq_erlang_version }}
+
+rabbitmq_erlang_apt_repo_file: rabbitmq_erlang
+
+# APT - RabbitMQ Server
+
+rabbitmq_apt_key_url: https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
+rabbitmq_apt_key_id: 8C695B0219AFDEB04A058ED8F4E789204D206F89
+rabbitmq_apt_key_keyring_file: packagecloud-rabbitmq-rabbitmq-server.gpg
+
+rabbitmq_apt_repo_line: >-
+  deb https://packagecloud.io/rabbitmq/rabbitmq-server/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release | lower }} main
+
+rabbitmq_apt_repo_file: rabbitmq_rabbitmq-server

@@ -1,0 +1,141 @@
+---
+  - name: Install base packages
+    package:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - "{{ app_base_packages }}"
+    tags:
+      - app_python
+      - deploy
+
+  - name: Create {{ app_group }} group
+    group:
+      name: "{{ app_group }}"
+      state: present
+    tags:
+      - app_python
+      - deploy
+
+  - name: Create {{ app_user }} username
+    user:
+      name: "{{ app_user }}"
+      group: "{{ app_group }}"
+      createhome: no
+      home: "{{ app_path }}"
+      shell: /bin/bash
+    tags:
+      - app_python
+      - deploy
+
+  - name: Create base directories
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+    with_items:
+      - "{{ app_shared_folders }}"
+    tags:
+      - app_python
+      - deploy
+
+  - name: Check if client key exists
+    stat:
+      path: /etc/.client_key
+    register: client_key
+    tags:
+      - app_python
+      - deploy
+
+  - name: Enable client key for repository
+    file:
+      src: /etc/.client_key
+      dest: "{{ app_path }}/.ssh/id_rsa"
+      state: link
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+    when: client_key.stat.exists == True
+    tags:
+      - app_python
+      - deploy
+
+  - name: Deploy application on {{ app_path }}/app
+    git:
+      repo: "{{ app_repository }}"
+      dest: "{{ app_path }}/app"
+      accept_hostkey: yes
+      force: yes
+    become: true
+    become_user: "{{ app_user }}"
+    when: client_key.stat.exists == True
+    tags:
+      - app_python
+      - deploy
+
+  - name: Configure application environment variables
+    template:
+      src: app.env.j2
+      dest: /etc/profile.d/app.env.sh
+    tags:
+      - app_python
+      - deploy
+
+  - name: Check if requirements.txt exists
+    stat:
+      path: "{{ app_path }}/app/requirements.txt"
+    register: app_requirements
+    tags:
+      - app_python
+      - deploy
+
+  - name: Get pip installed by pyenv
+    shell: . {{ app_path }}/shared/pyver && pyenv which pip 2>&1
+    register: pyenv_pip_binary
+    tags:
+      - app_python
+      - deploy
+
+  - name: Install dependencies of application
+    pip:
+      requirements: "{{ app_path }}/app/requirements.txt"
+      executable: "{{ pyenv_pip_binary.stdout }}"
+    when: app_requirements.stat.exists == True
+    tags:
+      - app_python
+      - deploy
+
+  - name: Install start_app shellscript
+    template:
+      src: start_app.j2
+      dest: "{{ app_path }}/shared/start_app"
+      mode: 0755
+    notify:
+      - reload supervisord
+    tags:
+      - app_python
+      - deploy
+
+  - name: Setup supervisord for python application
+    template:
+      src: app.supervisor.ini.j2
+      dest: "{{ (ansible_os_family == 'Debian') | ternary('/etc/supervisor/conf.d/app.conf', '/etc/supervisord.d/app.ini') }}"
+    when: ((ansible_os_family != 'RedHat') or (ansible_distribution_major_version != '6'))
+    notify:
+      - reload supervisord
+    tags:
+      - app_python
+      - deploy
+
+  - name: Setup supervisord for python application (CentOS 6)
+    blockinfile:
+      path: /etc/supervisord.conf
+      block: "{{ lookup('template', 'app.supervisor.ini.j2') }}"
+      insertafter: "; EOF"
+      marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    when: (ansible_os_family == 'RedHat') and (ansible_distribution_major_version == '6')
+    notify:
+      - reload supervisord
+    tags:
+      - app_python
+      - deploy

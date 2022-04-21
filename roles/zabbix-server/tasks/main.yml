@@ -1,0 +1,161 @@
+---
+
+  - name: Install base Packages
+    package:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - "{{ packages[os_flavor] }}"
+    tags:
+      - zabbix-server
+
+  - name: Download Zabbix server
+    get_url:
+      url: https://ufpr.dl.sourceforge.net/project/zabbix/ZABBIX%20Latest%20Stable/{{ zabbix_version }}/zabbix-{{ zabbix_version }}.tar.gz
+      dest: /opt/zabbix-{{ zabbix_version }}.tar.gz
+      validate_certs: no
+    tags:
+      - zabbix-server
+
+  - name: Create necessary folders
+    file:
+      path: "{{ item }}"
+      state: directory
+    with_items:
+      - /etc/zabbix
+      - /etc/zabbix/web
+      - /var/run/zabbix
+      - /var/log/zabbix
+    tags:
+      - zabbix-server
+
+  - name: Unarchive Zabbix server
+    unarchive:
+      src: /opt/zabbix-{{ zabbix_version }}.tar.gz
+      dest: /opt
+      remote_src: yes
+    tags:
+      - zabbix-server
+
+  - name: Add Zabbix group
+    group:
+      name: zabbix
+      state: present
+    tags:
+      - zabbix-server
+
+  - name: Add Zabbix user
+    user:
+      append: yes
+      name: zabbix
+      createhome: no
+      group: zabbix
+      shell: /sbin/nologin
+      state: present
+    tags:
+      - zabbix-server
+
+  - name: Adjust permissions to some directories
+    file:
+      path: "{{ item }}"
+      state: touch
+      owner: zabbix
+      group: zabbix
+    with_items:
+      - /var/log/zabbix
+      - /var/run/zabbix
+    tags:
+      - zabbix-server
+
+  - name: Configure Zabbix Server
+    command: ./configure --enable-server --enable-ipv6 --prefix=/usr --sysconfdir=/etc/zabbix --with-mysql --with-net-snmp --with-libcurl --with-libxml2 --with-iconv --with-ldap
+    args:
+      chdir: /opt/zabbix-{{ zabbix_version }}
+    tags:
+      - zabbix-server
+
+  - name: Compile & Install Zabbix Server
+    command: /bin/bash -c 'make && make install'
+    args:
+      chdir: /opt/zabbix-{{ zabbix_version }}
+    tags:
+      - zabbix-server
+
+  - name: Copy Zabbix Server frontend to /usr/share/zabbix/web
+    shell: cp -fr /opt/zabbix-{{ zabbix_version }}/frontends/php /usr/share/zabbix/web
+    args:
+      creates: /usr/share/zabbix/web/conf
+    tags:
+      - zabbix-server
+
+  - name: Install init.d script file
+    template:
+      src: zabbix-server.init.{{ ansible_os_family | lower }}.j2
+      dest: /etc/init.d/zabbix-server
+      mode: 0755
+    tags:
+      - zabbix-server
+
+  - name: Force all notified handlers to run at this point, not waiting for normal sync points
+    meta: flush_handlers
+
+  - name: Create a new database for Zabbix Server
+    mysql_db:
+      name: zabbix
+      state: present
+      encoding: utf8
+      collation: utf8_bin
+    tags:
+      - zabbix-server
+
+  - name: Creates Zabbix server MySQL user
+    mysql_user:
+      name: zabbix
+      password: "{{ lookup('password', '/etc/zabbix_mysql_password chars=digits') }}"
+      priv: 'zabbix.*:ALL'
+      state: present
+    tags:
+      - zabbix-server
+
+  - name: Check if schema for Zabbix Server already loaded
+    shell: mysql -uzabbix -p$(cat /etc/zabbix_mysql_password) zabbix -e "SHOW TABLES LIKE 'users'" -sN
+    register: dbstatus
+    failed_when: dbstatus.rc == 2
+    tags:
+      - zabbix-server
+
+  - name: Load database schema for Zabbix Server
+    shell: cat {{ item }} | mysql -uzabbix -p$(cat /etc/zabbix_mysql_password) zabbix
+    args:
+      chdir: /opt/zabbix-{{ zabbix_version }}/database/mysql
+    when: dbstatus.stdout != "users"
+    with_items:
+      - schema.sql
+      - images.sql
+      - data.sql
+    tags:
+      - zabbix-server
+
+  - name: Configure Zabbix Server
+    template:
+      src: zabbix_server.conf.j2
+      dest: /etc/zabbix/zabbix_server.conf
+    notify:
+      - restart zabbix-server
+    tags:
+      - zabbix-server
+
+  - name: Configure Zabbix Server Web
+    template:
+      src: zabbix.conf.php.j2
+      dest: /etc/zabbix/web/zabbix.conf.php
+    tags:
+      - zabbix-server
+
+  - name: Create link to config if not exists
+    file:
+      src: /etc/zabbix/web/zabbix.conf.php
+      dest: /usr/share/zabbix/web/conf/zabbix.conf.php
+      state: link
+    tags:
+      - zabbix-server

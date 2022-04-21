@@ -1,0 +1,18 @@
+---
+  service:
+    vault:
+      enabled: true
+      running: true
+
+  file:
+    /etc/vault:
+      filetype: directory
+      exists: true
+    /etc/vault/vault-conf.json:
+      exists: true
+
+  user:
+    vault:
+      exists: true
+      groups:
+        - vault

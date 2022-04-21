@@ -1,0 +1,10 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  roles:
+    - role: molecule-ec2-manager
+      vars:
+        mec2_action: create

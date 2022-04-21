@@ -1,0 +1,10 @@
+---
+  file:
+    /etc/mongod.conf:
+      exists: true
+
+  user:
+    mongod:
+      exists: true
+      groups:
+        - mongod

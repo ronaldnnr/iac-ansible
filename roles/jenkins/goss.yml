@@ -1,0 +1,35 @@
+---
+
+  file:
+    {{ if eq .Vars.ansible_facts.ansible_os_family "Debian" }}
+    /etc/apt/sources.list.d/jenkins-ci.list:
+      exists: true
+    {{ end }}
+    {{ if eq .Vars.ansible_facts.ansible_os_family "RedHat" }}
+    /etc/yum.repos.d/jenkins-ci.repo:
+      exists: true
+    {{ end }}
+    /etc/init.d/jenkins:
+      exists: true
+
+  package:
+    jenkins:
+      installed: true
+
+  port:
+    tcp:8080:
+      listening: true
+      ip:
+        - 0.0.0.0
+
+  service:
+    jenkins:
+      running: true
+      enabled: true
+
+  http:
+    http://localhost:8080/login?from=:
+      status: 200
+      no-follow-redirects: false
+      allow-insecure: true
+      timeout: 6800

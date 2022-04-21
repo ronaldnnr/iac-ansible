@@ -1,0 +1,36 @@
+---
+# tasks file for elastic-search 
+   - name: Install Java 8
+     yum:
+       name: "{{ java_package }}"
+       state: present
+    
+   - name: Set repository elastic search
+     template:
+       src: elasticsearch.repo.j2
+       dest: /etc/yum.repos.d/elasticsearch.repo
+       owner: root
+       group: root
+
+   - name: Install elastic search
+     yum:
+       name: elasticsearch
+       state: present
+    
+   - name: Config
+     template:
+       src: elasticsearch.yml.j2
+       dest: /etc/elasticsearch/elasticsearch.yml
+
+   - name: Start ElasticSearch
+     systemd:
+       name: elasticsearch
+       state: started 
+       enabled: yes
+       daemon_reload: yes 
+
+   - name: Waiting elasticsearch 
+     pause:
+       seconds: 15
+
+

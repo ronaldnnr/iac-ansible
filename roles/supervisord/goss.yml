@@ -1,0 +1,22 @@
+---
+  package:
+    supervisor:
+      installed: true
+
+  file:
+    {{ if eq .Vars.ansible_facts.ansible_os_family "RedHat" }}
+    /etc/supervisord.conf:
+      exists: true
+    {{ if .Vars.ansible_facts.ansible_distribution_major_version | regexMatch "[7]" }}
+    /etc/supervisord.d:
+      exists: true
+      filetype: directory
+    {{ end }}
+    {{ end }}
+    {{ if eq .Vars.ansible_facts.ansible_os_family "Debian" }}
+    /etc/supervisor/supervisord.conf:
+      exists: true
+    /etc/supervisor/conf.d:
+      exists: true
+      filetype: directory
+    {{ end }}

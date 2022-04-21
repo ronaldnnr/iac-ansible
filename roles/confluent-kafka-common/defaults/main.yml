@@ -1,0 +1,50 @@
+---
+# Arquivo de variáveis defaults da role.
+
+zookeeper:
+  properties:
+    clientPort: 2181
+kafka_port: 9092
+kerberos:
+  keytab_dir: /etc/security/keytabs
+confluent:
+  package_version: 5.3.0-1
+  repo_version: 5.3
+  support:
+    customer_id: anonymous
+    metrics_enabled: true
+
+jolokia_jar_path: /opt/jolokia/jolokia.jar
+zookeeper_jolokia_port: 7770
+kafka_broker_jolokia_port: 7771
+schema_registry_jolokia_port: 7772
+kafka_connect_jolokia_port: 7773
+ksql_jolokia_port: 7774
+kafka_rest_jolokia_port: 7775
+
+open_file_limit: 500000
+
+confluent_common:
+  repository:
+    debian:
+      key_url: "https://packages.confluent.io/deb/{{confluent.repo_version}}/archive.key"
+      repository: "deb [arch=amd64] https://packages.confluent.io/deb/{{confluent.repo_version}} stable main"
+    redhat:
+      main:
+        baseurl: "https://packages.confluent.io/rpm/{{confluent.repo_version}}"
+        gpgcheck: 1
+        gpgkey: "https://packages.confluent.io/rpm/{{confluent.repo_version}}/archive.key"
+        enabled: 1
+      dist:
+        baseurl: "https://packages.confluent.io/rpm/{{confluent.repo_version}}/7"
+        gpgcheck: 1
+        gpgkey: "https://packages.confluent.io/rpm/{{confluent.repo_version}}/archive.key"
+        enabled: 1
+
+install_java: true
+redhat_java_package_name: java-1.8.0-openjdk
+debian_java_package_name: openjdk-8-jdk
+ubuntu_java_package_name: openjdk-8-jdk
+ubuntu_java_repository: ppa:openjdk-r/ppa
+
+jolokia_version: 1.6.2

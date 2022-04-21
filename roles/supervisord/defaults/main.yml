@@ -1,0 +1,19 @@
+---
+# defaults file for supervisord
+
+supervisord_version: latest
+
+supervisord_bin_path: "{{ (ansible_os_family == 'Debian') | ternary('/usr/local/bin', '/usr/bin') }}"
+supervisord_config_path: /etc/supervisord
+supervisord_log_dir: /var/log/supervisord
+
+distro:
+  RedHat:
+    package:
+      - supervisor
+    config_path: /etc/supervisord.conf
+  Debian:
+    package:
+      - supervisor
+    config_path: /etc/supervisor/supervisord.conf
+  

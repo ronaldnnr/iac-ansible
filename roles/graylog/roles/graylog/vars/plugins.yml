@@ -1,0 +1,10 @@
+---
+__graylog_stock_plugins:
+  # Aggregates Plugin for Graylog
+  - name: graylog-plugin-aggregates-2.4.0
+    url: https://github.com/cvtienhoven/graylog-plugin-aggregates/releases/download/2.4.0/graylog-plugin-aggregates-2.4.0.jar
+    sha256: f78312fb1efce0d45d61beb40cfdd1922ddc9a4fcb3ef5b7350b64692b5588b0
+  # Slack/Mattermost Plugin for Graylog
+  - name: graylog-plugin-slack-3.1.0
+    url: https://github.com/graylog-labs/graylog-plugin-slack/releases/download/3.1.0/graylog-plugin-slack-3.1.0.jar
+    sha256: 93a4d725097b9332e352a74085e6b5aa7188cdda287acfaf7f078045d243f718

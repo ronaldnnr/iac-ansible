@@ -1,0 +1,50 @@
+---
+
+zabbix_version: 3.4.4
+
+os_flavor: "{{ ansible_distribution | lower }}_{{ ansible_distribution_major_version }}"
+
+packages:
+  centos_6:
+    - MySQL-python
+    - python-pip
+    - python-devel
+    - gcc
+    - gcc-c++
+    - make
+    - openssl-devel
+    - libxml2-devel
+    - net-snmp-devel
+    - libevent-devel
+    - pcre-devel
+    - libcurl-devel
+    - openldap-devel
+  centos_7:
+    - MySQL-python
+    - python-pip
+    - python-devel
+    - gcc
+    - gcc-c++
+    - make
+    - openssl-devel
+    - libxml2-devel
+    - net-snmp-devel
+    - libevent-devel
+    - pcre-devel
+    - libcurl-devel
+    - openldap-devel
+  debian_9:
+    - python-mysqldb
+    - python-pip
+    - python-dev
+    - gcc
+    - g++
+    - make
+    - libssl-dev
+    - libmysql++-dev
+    - libxml2-dev
+    - libsnmp-dev
+    - libevent-dev
+    - libpcre3-dev
+    - libcurl4-openssl-dev
+    - libldap2-dev

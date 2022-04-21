@@ -1,0 +1,40 @@
+---
+- name: Include OS-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution_release }}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+  tags:
+    - graylog:setup
+    - graylog:configure
+
+- name: Include setup tasks (Debian-like)
+  import_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+  tags: graylog:setup
+
+- name: Include configuration-related tasks
+  import_tasks: configuration.yml
+  tags: graylog:configure
+
+- name: Enable and start the Graylog service
+  service:
+    name: graylog-server
+    state: started
+    enabled: yes
+  tags: graylog:service
+
+- name: Include plugins-related tasks
+  import_tasks: plugins.yml
+  tags: graylog:plugins
+
+- name: Restart services if configuration has changed
+  meta: flush_handlers
+
+- name: Include inputs-related tasks
+  import_tasks: inputs.yml
+  when: >
+    graylog_inputs_install and
+    'http://127.0.0.1' not in graylog_rest_listen_uri
+  tags: graylog:inputs

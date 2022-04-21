@@ -1,0 +1,15 @@
+---
+
+  - name: "Install squid3"
+    package:
+      name: squid
+      state: present
+    tags: squid3
+
+  - name: "Move conf template"
+    template:
+      src: debian.squid.conf.j2
+      dest: /etc/squid/squid.conf
+    notify:
+      - restart Squid
+    tags: squid3

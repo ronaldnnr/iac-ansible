@@ -1,0 +1,64 @@
+---
+- name: Update APT cache
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Ensure debian-archive-keyring is installed
+  apt:
+    name: debian-archive-keyring
+    state: present
+  when: ansible_distribution == "Debian"
+
+- name: Ensure required tools are installed
+  apt:
+    name:
+      - apt-transport-https
+      - curl
+      - gnupg
+    state: present
+
+# RabbitMQ signing key
+
+- name: Ensure RabbitMQ signing key is installed
+  apt_key:
+    url: "{{ rabbitmq_signing_key_url }}"
+    id: "{{ rabbitmq_signing_key_id }}"
+    keyring: /etc/apt/trusted.gpg.d/{{ rabbitmq_signing_key_keyring_file }}
+    state: present
+
+# Erlang
+
+- name: Ensure Erlang repository is configured
+  apt_repository:
+    repo: "{{ rabbitmq_erlang_apt_repo_line }}"
+    filename: "{{ rabbitmq_erlang_apt_repo_file }}"
+    state: present
+    update_cache: true
+
+- name: Configure Erlang repository pinning
+  copy:
+    content: |
+      Package: erlang*
+      Pin: release o=Bintray
+      Pin-Priority: 1000
+    dest: /etc/apt/preferences.d/erlang
+    owner: root
+    group: root
+    mode: 0644
+
+# RabbitMQ Server
+
+- name: Ensure RabbitMQ Server repository key is installed
+  apt_key:
+    url: "{{ rabbitmq_apt_key_url }}"
+    id: "{{ rabbitmq_apt_key_id }}"
+    keyring: /etc/apt/trusted.gpg.d/{{ rabbitmq_apt_key_keyring_file }}
+    state: present
+
+- name: Ensure RabbitMQ Server repository is configured
+  apt_repository:
+    repo: "{{ rabbitmq_apt_repo_line }}"
+    filename: "{{ rabbitmq_apt_repo_file }}"
+    state: present
+    update_cache: true

@@ -1,0 +1,40 @@
+---
+
+  - name: Install initscripts on Amazon Linux 2 Candidate
+    package:
+      name: initscripts
+      state: latest
+    when: ansible_os_family == 'RedHat'
+    tags: jenkins
+
+  - name: Install base packages
+    yum:
+      name:
+        - python-pycurl
+        - java-1.8.0-openjdk
+      state: latest
+    tags: jenkins
+
+  - name: Install jenkins-ci repository key
+    rpm_key:
+      key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+      state: present
+      validate_certs: no
+    tags: jenkins
+
+  - name: Install jenkins-ci repository
+    yum_repository:
+      name: jenkins-ci
+      description: Jenkins CI yum repository
+      baseurl: http://pkg.jenkins.io/redhat-stable
+      gpgcheck: yes
+    tags: jenkins
+
+  - name: Install jenkins
+    yum:
+      name: jenkins
+      update_cache: yes
+      state: present
+    notify:
+      - restart jenkins
+    tags: jenkins

@@ -1,0 +1,116 @@
+---
+  - name: Install base packages
+    package:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - "{{ app_base_packages }}"
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Create {{ app_group }} group
+    group:
+      name: "{{ app_group }}"
+      state: present
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Create {{ app_user }} username
+    user:
+      name: "{{ app_user }}"
+      group: "{{ app_group }}"
+      createhome: no
+      home: "{{ app_path }}"
+      shell: /bin/bash
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Create base directories
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+    with_items:
+      - "{{ app_shared_folders }}"
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Check if client key exists
+    stat:
+      path: /etc/.client_key
+    register: client_key
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Enable client key for repository
+    file:
+      src: /etc/.client_key
+      dest: "{{ app_path }}/.ssh/id_rsa"
+      state: link
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+    when: client_key.stat.exists == True
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Deploy application on {{ app_path }}/app
+    git:
+      repo: "{{ app_repository }}"
+      dest: "{{ app_path }}/app"
+      accept_hostkey: yes
+      force: yes
+    become: true
+    become_user: "{{ app_user }}"
+    when: client_key.stat.exists == True
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Configure application environment variables
+    template:
+      src: app.env.j2
+      dest: /etc/profile.d/app.env.sh
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Install dependencies of application
+    npm:
+      path: "{{ app_path }}/app"
+      state: present
+    become: true
+    become_user: "{{ app_user }}"
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Install forever
+    npm:
+      name: forever
+      global: yes
+      state: present
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: "Check if application is running."
+    command: /bin/bash -lc 'forever list'
+    register: forever_list
+    changed_when: false
+    tags:
+      - app_nodejs
+      - deploy
+
+  - name: Start application
+    command: /bin/bash -lc 'forever start "{{ app_start_file }}"'
+    when: forever_list.stdout.find(app_start_file) == -1
+    tags:
+      - app_nodejs
+      - deploy

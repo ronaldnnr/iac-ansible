@@ -1,0 +1,6 @@
+---
+epel_package_name: epel-release
+
+epel_repo_file: /etc/yum.repos.d/epel.repo
+
+epel_enable_repo: true

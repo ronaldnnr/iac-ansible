@@ -1,0 +1,3 @@
+- git: git@gitlab.com:leo-labs/ansible/roles/confluent-kafka-common.git
+  version: master
+  dst: /tmp/roles/confluent-kafka-common/

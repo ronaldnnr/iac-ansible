@@ -1,0 +1,16 @@
+---
+
+  package:
+    rundeck:
+      installed: true
+
+  service:
+    rundeckd:
+      running: true
+      enabled: true
+
+  port:
+    tcp:4440:
+      listening: true
+      ip:
+        - 0.0.0.0

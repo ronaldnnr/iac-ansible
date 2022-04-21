@@ -1,0 +1,11 @@
+---
+  logrotate_configs:
+    - /var/log/yum.log:
+       - missingok
+       - notifempty
+       - size 30k
+       - yearly
+       - create 0600 root root
+
+    - /var/log/http.log:
+       - size 30k

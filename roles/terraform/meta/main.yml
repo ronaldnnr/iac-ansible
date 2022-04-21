@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Luis Palacios
+  description: IT Analyst at leonardo-labs
+  company: leonardo-lab
+
+  min_ansible_version: 1.2

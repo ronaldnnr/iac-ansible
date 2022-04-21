@@ -1,0 +1,7 @@
+---
+# handlers file for gogs
+- name: gogs.service
+  service: 
+    name: gogs.service 
+    state: restarted
+    enabled: yes

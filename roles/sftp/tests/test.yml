@@ -1,0 +1,7 @@
+---
+- hosts: all
+  become: True
+  roles:
+    - ../../
+  vars:
+    sftp_authorized_key_file: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAqQAmucUxelpwZ97Bied0xA/8DWXs4/2ltZWIrXqOhmD665MH6ADjMZmROtTg7DTio6E1H428dvRJhSuUUVV/2Z1DhIfCCAdDYcwE2c5ksF3PiP64sK7qq00CGy1jc8oX9taRouP+PWdjVflXJVmRaHqyJIwvuI4U3Zxb/pxctT9ZSgx7mvmvmsWHo+03cts7CQ6iaQoqcI9eDjp2WQLGn2dcXXFPU1VFa6MKeP1xCKXLWwFeNxFGge66Yn1WjxONWSZ69rbfTCl1j2ATyULHAxS5aGdUezdgTkuKw6QChbJFh+n8n/0kMVYuQSOwh/vSAzCk7KG0Z5jLNNoCJJrRxw== SHSFTP02@webjmivlbr04.bs.br.bsch

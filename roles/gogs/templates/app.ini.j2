@@ -1,0 +1,51 @@
+APP_NAME = Gogs: Go Git Service
+RUN_USER = git
+RUN_MODE = prod
+
+[database]
+DB_TYPE = sqlite
+PATH = data/gogs.db
+
+[repository]
+ROOT = {{ gogs_repository }}
+
+[server]
+DOMAIN = {{ gogs_domain }}
+HTTP_ADDR = 0.0.0.0
+HTTP_PORT = 3000
+ROOT_URL = http://{{ gog_root_url}}:3000/
+DISABLE_SSH = false
+SSH_PORT = 22
+OFFLINE_MODE = false
+
+[mailer]
+ENABLED = false
+
+[service]
+REGISTER_EMAIL_CONFIRM = false
+ENABLE_NOTIFY_MAIL = false
+DISABLE_REGISTRATION = true
+ENABLE_CAPTCHA = false
+REQUIRE_SIGNIN_VIEW = true
+
+[picture]
+DISABLE_GRAVATAR = false
+
+[session]
+PROVIDER = file
+
+[log]
+ROOT_PATH = /var/log/gogs
+MODE = file
+LEVEL = Info
+
+[log.file]
+LEVEL =
+LOG_ROTATE = true
+DAILY_ROTATE = true
+MAX_SIZE_SHIFT = 28
+MAX_LINES = 1000000
+MAX_DAYS = 7
+
+[security]
+INSTALL_LOCK = false

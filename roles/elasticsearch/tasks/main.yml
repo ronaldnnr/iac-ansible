@@ -1,0 +1,152 @@
+---
+  - name: Install apt-transport-https
+    apt:
+      name: apt-transport-https
+      state: latest
+    when:
+      - ansible_os_family == "Debian"
+    tags:
+      - elasticsearch
+
+  - name: Uninstall Java
+    package:
+      name: "{{ java_old_version[ansible_os_family] }}"
+      state: removed
+    when:
+      - rm_java_old_version == True
+    tags:
+      - elasticsearch
+
+  - name: Install Java 8
+    package:
+      name: "{{ java_new_version[ansible_os_family] }}"
+      state: present
+    when:
+      java_install == True
+    tags:
+      - elasticsearch
+
+  - name: Install Elastic.co repository public key
+    apt_key:
+      url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      state: present
+    when:
+      - ansible_os_family == "Debian"
+    tags:
+      - elasticsearch
+
+  - name: Installing Elastic.co repository
+    apt_repository:
+      repo: deb https://artifacts.elastic.co/packages/{{ elasticsearch_version }}.x/apt stable main
+      filename: elasticsearch
+      state: present
+      update_cache: yes
+    when:
+      - ansible_os_family == "Debian"
+    tags:
+      - elasticsearch
+
+  - name: Install Elastic.co repository
+    yum_repository:
+      name: Elastic.co
+      description: Repository elastic.co for Enterprise Linux {{ ansible_distribution_version[:1] }}
+      baseurl: https://artifacts.elastic.co/packages/{{ elasticsearch_version }}.x/yum
+      gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      gpgcheck: yes
+    when:
+      - ansible_os_family == "RedHat"
+    tags:
+      - elasticsearch
+
+  - name: Installing Elasticsearch package
+    package:
+      name: elasticsearch
+      state: present
+    tags:
+      - elasticsearch
+
+  - name: Create Dir data
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: elasticsearch
+      group: elasticsearch
+      mode: 0740
+    with_items:
+      - "{{ elasticsearch_path_data|lower }}"
+    tags:
+      - elasticsearch
+
+  - name: Create Log dir
+    file:
+      path: /usr/share/elasticsearch/logs
+      state: directory
+      owner: elasticsearch
+      group: elasticsearch
+      mode: 0740
+    tags:
+      - elasticsearch
+
+#  - name: Installing Plugins (RedHat)
+#    shell: "/usr/share/elasticsearch/bin/elasticsearch-plugin install {{ item }}"
+#    args:
+#      creates: "/usr/share/elasticsearch/plugins/{{ item }}/"
+#    with_items:
+#      - "x-pack"
+#    notify:
+#      - restart elasticsearch
+#    when:
+#      - ansible_os_family == "RedHat"
+#      - elasticsearch_version  == 6
+#    tags:
+#      - elasticsearch
+
+  - name: Installing Plugins (Debian)
+    shell: "/usr/share/elasticsearch/bin/elasticsearch-plugin install {{ item }}"
+    args:
+      creates: "/usr/share/elasticsearch/plugins/{{ item }}/"
+    with_items:
+      - "x-pack"
+    notify:
+      - restart elasticsearch
+    when:
+      - ansible_os_family == "Debian"
+      - elasticsearch_version  == "6"
+    tags:
+      - elasticsearch
+
+  - name: Config Cluster elasticsearch
+    template:
+      src: elasticsearch.yml.j2
+      dest: "{{ elasticsearch_config_dir|lower }}/elasticsearch.yml"
+      owner: elasticsearch
+      group: elasticsearch
+      mode: 0640
+    when:
+      - elasticsearch_cluster == True
+      - elasticsearch_version == 6
+    notify:
+      - restart elasticsearch
+    tags:
+      - elasticsearch
+
+
+  - name: Config Cluster elasticsearch 7
+    template:
+      src: elasticsearch7.yml.j2
+      dest: "{{ elasticsearch_config_dir|lower }}/elasticsearch.yml"
+      owner: elasticsearch
+      group: elasticsearch
+      mode: 0640
+    when:
+      - elasticsearch_cluster == True
+      - elasticsearch_version == 7
+    notify:
+      - restart elasticsearch
+    tags:
+      - elasticsearch
+
+
+
+  - name: Flush handlers
+    meta: flush_handlers

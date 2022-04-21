@@ -1,0 +1,39 @@
+# Application scope
+description: Read-Only Access Policy
+context:
+  application: 'rundeck'
+for:
+  project:
+    - match:
+        name: '.*'
+      allow: [read]
+by:
+  group: readonly
+
+---
+
+# Project scope
+description: Read-Only Access Policy.
+context:
+  project: '.*'
+for:
+  resource:
+    - equals:
+        kind: event
+      allow: [read] # allow read of all activity (jobs run by all users)
+  job:
+    - allow: [read] # allow read of all jobs
+    - match:
+        group: '^readonly($|/.*)'
+      allow: [read,run] # allow run access for jobs within the "mygroup" top level group
+  adhoc:
+    - deny: run # don't allow adhoc execution
+  node:
+    - contains:
+        tags: '.*'
+      allow: [read, run] # allow run on nodes with the tag 'mytag'
+    - equals:
+        rundeck_server: 'true'
+      allow: [read, run] # allow run on rundeck server node
+by:
+  group: readonly

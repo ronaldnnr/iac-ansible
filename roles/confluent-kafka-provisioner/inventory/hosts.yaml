@@ -1,0 +1,51 @@
+all:
+  vars:
+    ansible_become: true
+    security_mode: plaintext
+  children:
+    zookeeper:
+      hosts:
+        172.31.35.118:
+          ansible_ssh_host: 35.153.71.158
+          zookeeper_id: 5
+        172.31.42.67:
+          ansible_ssh_host: 3.82.53.224
+          zookeeper_id: 4
+        172.31.47.210:
+          ansible_ssh_host: 18.232.104.92
+          zookeeper_id: 3
+        172.31.40.83:
+          ansible_ssh_host: 54.161.8.216
+          zookeeper_id: 2
+        172.31.46.152:
+          ansible_ssh_host: 54.80.80.95
+          zookeeper_id: 1
+    kafka_broker:
+      hosts:
+        172.31.35.118:
+          ansible_ssh_host: 35.153.71.158
+          broker_id: 5
+        172.31.42.67:
+          ansible_ssh_host: 3.82.53.224
+          broker_id: 4
+        172.31.47.210:
+          ansible_ssh_host: 18.232.104.92
+          broker_id: 3
+        172.31.40.83:
+          ansible_ssh_host: 54.161.8.216
+          broker_id: 2
+        172.31.46.152:
+          ansible_ssh_host: 54.80.80.95
+          broker_id: 1
+    control_center:
+      hosts:
+        172.31.47.117:
+          ansible_ssh_host: 52.2.239.165
+    kafka_connect:
+      hosts:
+        172.31.35.118:
+          ansible_ssh_host: 35.153.71.158
+    kafka_rest:
+      hosts:
+        172.31.35.118:
+          ansible_ssh_host: 35.153.71.158

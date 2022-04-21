@@ -1,0 +1,7 @@
+---
+- name: "mandiclabs.elasticsearch7"
+  src: "https://gitlab.com/leo-labs/ansible/roles/elasticsearch"
+
+- name: "jdauphant.nginx"
+  src: "https://github.com/jdauphant/ansible-role-nginx.git"
+  version: "v2.21.2"

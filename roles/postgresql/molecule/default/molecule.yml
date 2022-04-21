@@ -1,0 +1,31 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: molecule/default/yaml-lint.yml
+platforms:
+  - name: ubuntu18
+    image: ubuntu:18.04
+  - name: ubuntu19
+    image: ubuntu:19.04
+  - name: ubuntu16
+    image: ubuntu:16.04
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-playbook.yml}
+  config_options:
+    defaults:
+      stdout_callback: yaml
+scenario:
+  name: default
+verifier:
+  name: goss
+  lint:
+    name: yamllint

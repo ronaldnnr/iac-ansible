@@ -1,0 +1,13 @@
+---
+- name: Configure repository
+  apt:
+    deb: "{{ graylog_repo_deb_url }}"
+    state: present
+  tags: graylog:repo
+
+- name: Install Graylog packages
+  apt:
+    name: graylog-server
+    state: present
+    update_cache: yes
+  tags: graylog:packages

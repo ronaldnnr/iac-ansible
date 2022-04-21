@@ -1,0 +1,27 @@
+---
+# defaults file for app_python6
+python_version: 3.6.4
+
+
+app_path: /data
+app_repository: https://github.com/django-ve/helloworld.git
+app_default_port: 8000
+
+app_pyenv_cmd: "{{ app_path }}/shared/pyver"
+app_start_cmd: "python manage.py migrate && python manage.py runserver"
+
+app_user: deploy
+app_group: "{{ app_user }}"
+
+app_shared_folders:
+  - "{{ app_path }}"
+  - "{{ app_path }}/.ssh"
+  - "{{ app_path }}/shared"
+  - "{{ app_path }}/logs"
+
+app_base_packages:
+  - git
+  - sudo
+
+app_config:
+  DISTRO: linux

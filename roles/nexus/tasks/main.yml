@@ -1,0 +1,101 @@
+---
+
+- name: Install OpenJDK
+  yum:
+    name: "{{ OPEN_JDK }}"
+
+
+- name: Create the group {{ NEXUS_GROUP }}
+  group:
+    name: "{{ NEXUS_GROUP }}"
+    state: present
+
+
+- name: Create the user {{ NEXUS_USER }}
+  user:
+    name: "{{ NEXUS_USER }}"
+    group: "{{ NEXUS_GROUP }}"
+
+
+- name: Create the log directory for Nexus
+  file:
+    path: "/var/log/nexus3"
+    state: directory
+    owner: "{{ NEXUS_USER }}"
+    group: "{{ NEXUS_GROUP }}"
+
+
+- name: Download Nexus and extract files
+  unarchive:
+    src: "{{ NEXUS_DOWNLOAD_URL }}"
+    dest: "/opt/"
+    owner: "{{ NEXUS_USER }}"
+    group: "{{ NEXUS_GROUP }}"
+    remote_src: yes
+
+
+- name: Rename Nexus directory
+  shell: "mv nexus-* nexus"
+  args:
+    chdir: "/opt/"
+
+
+- name: Create the data directory for Nexus
+  file:
+    path: "{{ NEXUS_DIRECTORY }}/data"
+    state: directory
+    owner: "{{ NEXUS_USER }}"
+    group: "{{ NEXUS_GROUP }}"
+
+
+- name: Remove the configuration files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ NEXUS_DIRECTORY }}/bin/nexus.rc"
+    - "{{ NEXUS_DIRECTORY }}/bin/nexus.vmoptions"
+
+
+- name: Create the 'nexus.rc' configuration
+  lineinfile:
+    path: "{{ NEXUS_DIRECTORY }}/bin/nexus.rc"
+    line: "run_as_user=\"nexus\""
+    create: yes
+
+
+- name: Create the 'nexus.vmoptions' configuration
+  template:
+    src: templates/nexus.vmoptions.j2
+    dest: "{{ NEXUS_DIRECTORY }}/bin/nexus.vmoptions"
+    owner: "{{ NEXUS_USER }}"
+    group: "{{ NEXUS_GROUP }}"
+
+
+- name: Recursively change ownership
+  file:
+    path: "{{ NEXUS_DIRECTORY }}"
+    owner: "{{ NEXUS_USER }}"
+    group: "{{ NEXUS_GROUP }}"
+    recurse: yes
+
+
+- name: Create symbolic link for Nexus
+  file:
+    src: "{{ NEXUS_DIRECTORY }}/bin/nexus"
+    dest: "/etc/init.d/nexus"
+    state: link
+
+
+- name: Add Nexus as a system service
+  shell: "chkconfig --add nexus"
+
+
+- name: Enable Nexus
+  shell: "chkconfig --levels 345 nexus on"
+
+
+- name: Start Nexus
+  service:
+    name: nexus
+    state: started

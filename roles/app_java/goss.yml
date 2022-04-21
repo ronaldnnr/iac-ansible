@@ -1,0 +1,18 @@
+---
+  file:
+    /data/app:
+      filetype: directory
+      exists: true
+    /data/shared:
+      filetype: directory
+      exists: true
+    /data/logs:
+      filetype: directory
+      exists: true
+    /data/.ssh/id_rsa:
+      exists: true
+
+  http:
+    http://localhost/hello-world-java-1.0/:
+      status: 200
+      timeout: 1000

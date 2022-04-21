@@ -1,0 +1,13 @@
+---
+  file:
+    /etc/yum.repos.d/docker.repo
+      exists: true
+
+  package:
+    docker-engine:
+      installed: true
+
+  service:
+    docker:
+      running: true
+      enabled: true

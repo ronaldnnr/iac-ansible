@@ -1,0 +1,12 @@
+---
+- name: Configure Erlang cookie
+  copy:
+    content: "{{ rabbitmq_erlang_cookie }}"
+    dest: /var/lib/rabbitmq/.erlang.cookie
+    owner: rabbitmq
+    group: rabbitmq
+    mode: 0400
+  notify: Restart RabbitMQ Server
+
+- name: Flush handlers
+  meta: flush_handlers

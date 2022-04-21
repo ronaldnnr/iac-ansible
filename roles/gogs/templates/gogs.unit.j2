@@ -1,0 +1,19 @@
+[Unit]
+Description=Gogs (Go Git Service)
+After=syslog.target
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+User={{ gogs_user }}
+Group={{ gogs_user }}
+WorkingDirectory={{ gogs_user_home }}/gogs
+ExecStart={{ gogs_user_home }}/gogs/gogs web
+StandardError=journal
+Restart=always
+Environment=USER={{ gogs_user }} HOME={{ gogs_user_home }}
+NonBlocking=true
+
+[Install]
+WantedBy=multi-user.target

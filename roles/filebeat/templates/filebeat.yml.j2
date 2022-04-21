@@ -1,0 +1,41 @@
+filebeat.prospectors:
+{% for item in filebeat_prospectors %}
+  # {{ item }}
+  - type: {{ filebeat_prospectors[item].log_type }}
+    paths:
+      {% for path in filebeat_prospectors[item].paths %}
+- {{ path }}
+      {% endfor %}
+
+{% endfor %}
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+{% if filebeat_fields %}
+fields:
+{% for key, value in filebeat_fields.items() %}
+  {{ key }}: "{{ value }}"
+{% endfor %}
+{% endif %}
+
+{% if filebeat_kibana_hostname != "" %}
+setup.kibana:
+  host: "{{ filebeat_kibana_hostname }}"
+{% endif %}
+
+output.{{ filebeat_output }}:
+  hosts: ["{{ output_hosts[filebeat_output] | list | join ("\", \"") }}"]
+{% if es_basic_auth %}
+
+  protocol: "{{ es_protocol }}"
+  username: "{{ es_username }}"
+  password: "{{ es_password }}"
+{% endif %}
+{% if logstash_use_ssl %}
+
+  ssl.certificate_authorities: "{{ logstash_cert_auth }}"
+  ssl.certificate: "{{ logstash_cert_file }}"
+  ssl.key: "{{ logstash_cert_key }}"
+{% endif %}

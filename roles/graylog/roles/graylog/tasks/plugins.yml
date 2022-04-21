@@ -1,0 +1,28 @@
+---
+- name: Include plugins-related variables
+  include_vars: plugins.yml
+
+- name: Set the list of available plugins
+  set_fact:
+    __graylog_plugins: "{{ __graylog_stock_plugins + graylog_plugins }}"
+
+- name: Remove selected plugins
+  file:
+    path: "{{ graylog_plugin_dir }}/{{ item }}.jar"
+    state: absent
+  loop: "{{ graylog_remove_plugins }}"
+  notify: Restart Graylog server
+
+- name: Install selected plugins
+  get_url:
+    url: "{{ item.1.url }}"
+    dest: "{{ graylog_plugin_dir }}/{{ item.1.name }}.jar"
+    checksum: sha256:{{ item.1.sha256 }}
+    owner: root
+    group: root
+    mode: 0644
+  loop: "{{ graylog_install_plugins | product(__graylog_plugins) | list }}"
+  when: >
+    item.0 not in graylog_remove_plugins and
+    item.0 == item.1.name
+  notify: Restart Graylog server

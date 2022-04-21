@@ -1,0 +1,35 @@
+---
+netdata_git_url: "https://github.com/firehol/netdata.git"
+
+netdata_source_path: "/opt/netdata"
+
+netdata_script_path: "/opt/netdata/netdata-installer.sh"
+
+packages: 
+  RedHat:
+    - git
+    - zlib-devel
+    - libuuid-devel
+    - libmnl-devel
+    - gcc
+    - make
+    - autoconf
+    - automake
+    - pkgconfig
+    - curl
+    - jq
+    - nodejs
+  Debian:
+    - git
+    - zlib1g-dev
+    - uuid-dev
+    - libmnl-dev
+    - gcc
+    - make
+    - autoconf
+    - autoconf-archive
+    - autogen
+    - automake
+    - pkg-config
+    - curl
+    

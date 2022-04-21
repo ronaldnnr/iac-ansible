@@ -1,0 +1,20 @@
+- name: Include install.yml
+  include_tasks: install.yml
+  become: true
+
+- name: Include configure_one_master.yml
+  include_tasks: configure_one_master.yml
+  become: true
+  run_once: true
+  when: kube_one_master and inventory_hostname == kubemasters[0]
+
+- name: Include configure_multi_master.yml
+  include_tasks: configure_multi_master.yml
+  become: true
+  when: kube_multi_master and inventory_hostname == kubemasters[0] and inventory_hostname == kubemasters[1] and inventory_hostname == kubemasters[2]
+
+
+- name: Include configure_nodes.yml
+  include_tasks: configure_nodes.yml
+  become: true
+  when: inventory_hostname == kubenodes[0] and inventory_hostname == kubenodes[1] and inventory_hostname == kubenodes[2]

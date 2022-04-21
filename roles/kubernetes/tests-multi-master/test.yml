@@ -1,0 +1,28 @@
+---
+- hosts: all
+  become: True
+  vars:
+    etcd_local_node_ip: "{{ ansible_eth1.ipv4.address }}"
+    etcd_node1_hostname: kubemaster1
+    etcd_node2_hostname: kubemaster2
+    etcd_node3_hostname: kubemaster3
+    etcd_node1_ip: 192.168.56.11
+    etcd_node2_ip: 192.168.56.12
+    etcd_node3_ip: 192.168.56.13
+    kube_one_master: false
+    kube_multi_master: true
+    kube_node_ip: "{{ ansible_eth1.ipv4.address }}"
+    kube_master1_ip: 192.168.56.11
+    kube_master2_ip: 192.168.56.12
+    kube_master3_ip: 192.168.56.13
+    kube_master_balancer_ip: 192.168.56.10
+    kube_domain: acme.co
+    kube_master_balancer_hostname: balancer.acme.co
+    kube_master1: kubemaster1
+    kube_master2: kubemaster2
+    kube_master3: kubemaster3
+
+  roles:
+    - ../../etcd
+    - ../../docker
+    - ../../kubernetes

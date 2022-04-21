@@ -1,0 +1,44 @@
+---
+- name: Set the inputs' API URL
+  set_fact:
+    graylog_api_inputs_url: "{{ graylog_rest_listen_uri.rstrip('/') }}/system/inputs"
+
+- name: Get current inputs
+  uri:
+    url: "{{ graylog_api_inputs_url }}"
+    method: GET
+    user: "{{ graylog_root_username }}"
+    password: "{{ graylog_root_password }}"
+    force_basic_auth: yes
+    status_code: 200
+  register: graylog_check_inputs_status
+  until: >
+    graylog_check_inputs_status.status is defined and
+    graylog_check_inputs_status.status == 200
+  retries: 2
+  delay: 30
+
+- name: Set variable with existent inputs
+  set_fact:
+    graylog_existent_inputs: "{{ graylog_check_inputs_status.json.inputs }}"
+  when: >
+    graylog_check_inputs_status.json is defined and
+    graylog_check_inputs_status.json.inputs is defined
+
+- name: Install inputs
+  uri:
+    url: "{{ graylog_api_inputs_url }}"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ graylog_root_password }}"
+    force_basic_auth: yes
+    body: "{{ item | to_json }}"
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+      X-Requested-By: ""
+    status_code: 201
+  loop: "{{ graylog_inputs }}"
+  when: >
+    graylog_existent_inputs is defined and
+    graylog_existent_inputs | selectattr('title', 'equalto', item.title) | list | length == 0

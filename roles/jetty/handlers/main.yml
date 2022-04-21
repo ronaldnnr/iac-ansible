@@ -1,0 +1,13 @@
+---
+# handlers file for jetty
+
+  - name: restart jetty
+    service:
+      name: jetty
+      state: restarted
+      enabled: yes
+
+  - name: fix permissions jetty
+    command: "chown -R {{ jetty_user }}:{{ jetty_group }} {{ item }}"
+    with_items:
+      - "{{ jetty_install_path }}/jetty/webapps/"

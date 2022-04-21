@@ -1,0 +1,10 @@
+- name: get kubeadm join command
+  command: grep 'kubeadm join' /tmp/kube_init
+  register: kubeadm_join
+  delegate_to: "{{ master_node }}"
+  
+- name: add nodes on cluster
+  shell: "{{ kubeadm_join.stdout }}"
+  delegate_to: "{{ item }}"
+  with_items: "{{groups.kubenodes}}"
+  ignore_errors: true

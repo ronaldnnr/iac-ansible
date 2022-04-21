@@ -1,0 +1,6 @@
+---
+# defaults file for mongodb
+
+mongodb_version: 3.4
+
+mongodb_debian_apt_repo: 'deb http://repo.mongodb.org/apt/{{ ansible_distribution|lower }} jessie/mongodb-org/{{ mongodb_version }} main'

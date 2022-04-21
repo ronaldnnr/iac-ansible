@@ -1,0 +1,23 @@
+---
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install dependencies for Ruby
+  apt: name={{ item }} state=installed
+  with_items:
+    - build-essential
+    - libyaml-dev
+    - libxml2-dev
+    - libxslt-dev
+    - autoconf
+    - libc6-dev
+    - ncurses-dev
+    - automake
+    - libtool
+    - bison
+    - subversion
+    - zlib1g
+    - zlib1g-dev
+    - libssl-dev

@@ -1,0 +1,48 @@
+---
+  - name: Install MongoDB repository Key
+    apt_key:
+      keyserver: hkp://keyserver.ubuntu.com:80
+      id: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+      state: present
+    when:
+      ansible_distribution == "Debian"
+    tags: mongodb debian
+
+  - name: Install MongoDB repository
+    apt_repository:
+      repo: "{{ mongodb_debian_apt_repo }}"
+      state: present
+    when:
+      ansible_distribution == "Debian"
+    tags: mongodb debian
+
+  - name: Installing MongoDB on Debian
+    apt:
+      name: mongodb-org
+      state: installed
+    when:
+      ansible_distribution == "Debian"
+    notify:
+      - restart mongodb
+    tags: mongodb debian
+
+  - name: Install MongoDB repository
+    yum_repository:
+      name: mongodb-org-{{ mongodb_version }}.repo
+      description: MongoDB Repository for {{ ansible_distribution_version[:1] }}
+      baseurl: https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/{{ mongodb_version }}/x86_64/
+      gpgcheck: yes
+      gpgkey: https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc
+    when:
+      ansible_os_family == "RedHat"
+    tags: mongodb redhat
+
+  - name: redhat | Installing MongoDB
+    yum:
+      name: mongodb-org
+      state: installed
+    when:
+      ansible_os_family == "RedHat"
+    notify:
+      - restart mongodb
+    tags: redhat

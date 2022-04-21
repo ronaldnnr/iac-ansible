@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ -f "/etc/profile" ] ; then
+  . /etc/profile
+fi
+
+if [ -f "{{ app_pyenv_cmd }}" ] ; then
+  . {{ app_pyenv_cmd }}
+fi
+
+# execute defined command
+cd {{ app_path }}/app
+{{ app_start_cmd }}

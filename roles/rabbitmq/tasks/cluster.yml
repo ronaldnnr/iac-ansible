@@ -1,0 +1,43 @@
+---
+- name: Ensure all RabbitMQ hosts are in /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} RabbitMQ Cluster - ANSIBLE MANAGED, DO NOT EDIT!"
+    block: |
+      {% for host in (groups.all | sort) %}
+      {{ hostvars[host].ansible_default_ipv4.address }}  {{ hostvars[host].ansible_hostname }}
+      {% endfor %}
+    create: false
+    backup: true
+    state: present
+  tags: rabbitmq:cluster:hosts
+
+- name: Ensure RabbitMQ Server is running
+  service:
+    name: rabbitmq-server
+    state: started
+
+- name: Discover the cluster master host
+  set_fact:
+    rabbitmq_cluster_master_name: "{{ item }}"
+    rabbitmq_cluster_master_address: "rabbit@{{ hostvars[item].ansible_hostname }}"
+  when: >
+    hostvars[item].rabbitmq_cluster_master is defined
+    and hostvars[item].rabbitmq_cluster_master
+  loop: "{{ groups.all | sort }}"
+
+- name: Ensure RabbitMQ app is running
+  command: rabbitmqctl start_app
+  register: rabbitmq_start_app
+  changed_when: "'completed with' in rabbitmq_start_app.stdout_lines"
+
+- name: Check cluster status
+  command: rabbitmqctl cluster_status
+  register: rabbitmq_cluster_status
+  changed_when: false
+
+- name: Include cluster-joining tasks
+  import_tasks: cluster-join.yml
+  when: >
+    inventory_hostname != rabbitmq_cluster_master_name
+    and not (rabbitmq_cluster_master_address in rabbitmq_cluster_status.stdout)

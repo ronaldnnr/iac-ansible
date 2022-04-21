@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  remote_user: root
+  
+  vars:
+    nginx_php_enabled: false
+
+  roles:
+    - test

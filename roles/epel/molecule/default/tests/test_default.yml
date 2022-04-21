@@ -1,0 +1,10 @@
+---
+package:
+  epel-release:
+    installed: true
+
+file:
+  /etc/yum.repos.d/epel.repo:
+    exists: true
+    owner: root
+    group: root

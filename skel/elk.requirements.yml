@@ -1,0 +1,16 @@
+---
+
+  - name: common
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/common/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: java
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/java/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: kibana
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/kibana/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: elasticsearch
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/elasticsearch/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: logstash
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/logstash/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7

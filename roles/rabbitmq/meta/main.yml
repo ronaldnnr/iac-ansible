@@ -1,0 +1,15 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Leonardo Fernandes Solutions
+  description: "Role para instalação e configuração do RabbitMQ"
+  company: Leonardo Fernandes Solutions
+  license: license (Proprietary)
+  min_ansible_version: 2.6
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+  galaxy_tags: []

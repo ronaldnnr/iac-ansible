@@ -1,0 +1,27 @@
+---
+# tasks file for terraform
+
+- name: Install unzip package
+  package:
+    name: "unzip"
+    state: present
+    update_cache: yes
+  tags: terraform
+
+- name: Download terraform
+  get_url:
+    url: 'https://releases.hashicorp.com/terraform/{{ tf_version }}/terraform_{{ tf_version }}_linux_amd64.zip'
+    dest: /tmp/terraform.zip
+    mode: 0775
+  tags: terraform
+
+- name: Unarchive terraform binary
+  unarchive:
+    src: /tmp/terraform.zip
+    dest: /tmp
+    remote_src: yes
+  tags: terraform
+
+- name: Move to usr/bin
+  command: mv /tmp/terraform /usr/bin/
+  tags: terraform

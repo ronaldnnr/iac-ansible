@@ -1,0 +1,43 @@
+---
+# tasks file for netdata
+
+- name: Installing netdata dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+   - "{{ packages[ansible_os_family] }}"
+  tags:
+    - netdata
+
+- name: Creating directory
+  file:
+      path: "{{ netdata_source_path }}"
+      state: directory
+  tags:
+    - netdata
+
+- name: Cloning git repository
+  git:
+      repo: "{{ netdata_git_url }}"
+      dest: "{{ netdata_source_path }}"
+  tags:
+    - netdata
+
+- name: Coppying init
+  copy:
+    src: "{{ netdata_source_path }}/system/netdata-lsb.in"
+    dest: /etc/init.d/netdata
+    mode: 0755
+  tags:
+    - netdata
+
+- name: Installing netdata
+  shell: "{{ netdata_script_path }} --dont-wait"
+  args:
+    chdir: "{{ netdata_source_path }}"
+  notify:
+    - restart netdata
+  tags:
+    - netdata

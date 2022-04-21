@@ -1,0 +1,15 @@
+---
+  - name: Java App sample install playbook
+    hosts: all
+    become: yes
+    serial: 1
+    
+    vars:
+        enable_zabbix: false
+        enable_logs: false
+
+    roles:
+      - common
+      - { role: zabbix-agent, when: enable_zabbix }
+      - { role: filebeat, when: enable_logs }
+      - app_java

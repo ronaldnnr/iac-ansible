@@ -1,0 +1,25 @@
+{
+  "bootstrap": {{ consul_bootstrap }},
+  "datacenter": "{{ consul_datacenter }}",
+  "data_dir": "{{ consul_data_dir }}",
+  "log_level": "{{ consul_daemon_loglevel }}",
+  "node_name": "{{ consul_node_name }}",
+  "server": {{ is_server }},
+
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "ui": {{ consul_ui }},
+
+  {% if is_cluster %}
+
+  "encrypt": "{{ consul_cluster_crypt_key }}",
+  {% if groups['consul'] is defined %}
+  "start_join": [ "{{ groups['consul'] | join("\", \"") }}" ],
+  {% else %}
+  "start_join": [ "127.0.0.1" ],
+  {% endif %}
+  {% endif %}
+
+  "disable_remote_exec": true
+
+}

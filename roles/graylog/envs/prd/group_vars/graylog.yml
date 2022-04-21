@@ -1,0 +1,74 @@
+---
+# ------------------------------------
+# Variáveis globais
+# ------------------------------------
+
+__storage_mount_path: /storage
+
+# ------------------------------------
+# Role: lvm
+# ------------------------------------
+
+lvm_manage_disks: true
+
+lvm_pv_devices:
+  - /dev/nvme1n1
+
+lvm_vg_name: vg-graylog
+lvm_lv_name: lv-graylog
+lvm_lv_size: +100%FREE
+
+lvm_mount_path: "{{ __storage_mount_path }}"
+
+# -----------------------------------
+# MongoDB
+# -----------------------------------
+
+mongodb_major_version: "4.0"
+mongodb_bind_ip: 127.0.0.1
+
+mongodb_storage_dbpath: "{{ __storage_mount_path }}/mongodb/data"
+
+# -----------------------------------
+# Elasticsearch
+# -----------------------------------
+
+graylog_elasticsearch_hosts: http://127.0.0.1:9200
+
+elasticsearch_version: "6.x"
+elasticsearch_network_host: localhost
+elasticsearch_http_port: 9200
+
+elasticsearch_path_data: "{{ __storage_mount_path }}/elasticsearch/data"
+
+# -----------------------------------
+# Graylog
+# -----------------------------------
+
+graylog_version: "3.0"
+
+graylog_gelf_inputs_install: yes
+graylog_gelf_inputs_port: 11201
+
+graylog_root_username: admin
+
+graylog_root_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  34306438333439363735373361306361313539316162663139303039303564613562303562643935
+  3930343234636236623333393534366430353762653833610a326231353833366232353764646562
+  30386533393132326164373435323236626438623438313835336564666235306338656339333837
+  6339303631353735330a353335376631366566343336356433666337373333626338326564643865
+  35633330323564663965303563623436373866313362306435393064636634326234
+  
+graylog_root_timezone: America/Sao_Paulo
+
+# Endpoint para API e interface WEB 
+graylog_http_bind_address: 192.192.192.192:9000
+
+# Diretórios de dados
+graylog_message_journal_dir: "{{ __storage_mount_path }}/graylog-server/journal"
+graylog_content_packs_dir: "{{ __storage_mount_path }}/graylog-server/contentpacks"
+
+# Plugins
+graylog_install_plugins:
+  - graylog-plugin-slack-3.1.0

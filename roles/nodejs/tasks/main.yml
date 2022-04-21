@@ -1,0 +1,17 @@
+---
+  - name: Install cURL package
+    package:
+      name: curl
+      state: present
+    tags: nodejs
+
+  - name: cURL NodeJS package
+    shell: curl --silent --location https://{{ package_type[ansible_os_family] }}.nodesource.com/setup_{{ nodejs_version }}.x | bash -
+    tags: nodejs
+
+  - name: Install NodeJS package
+    package:
+      name: nodejs
+      state: present
+      update_cache: yes
+    tags: nodejs

@@ -1,0 +1,49 @@
+---
+- name: Ensure PV and VG exists
+  lvg:
+    vg: "{{ lvm_vg_name }}"
+    vg_options: "{{ lvm_vg_options | default(omit) }}"
+    pvs: "{{ lvm_pv_devices | join(',') }}"
+    pv_options: "{{ lvm_pv_options | default(omit) }}"
+    state: present
+  when: >
+    lvm_manage_disks
+    and lvm_pv_devices != []
+    and lvm_vg_name != ""
+  tags: lvm:vg
+
+- name: Ensure LV exists
+  lvol:
+    vg: "{{ lvm_vg_name }}"
+    lv: "{{ lvm_lv_name }}"
+    size: "{{ lvm_lv_size }}"
+    resizefs: "{{ lvm_lv_resizefs }}"
+    state: present
+  when: >
+    lvm_manage_disks
+    and lvm_lv_name != ""
+  tags: lvm:lv
+
+- name: Ensure volume is formatted
+  filesystem:
+    fstype: "{{ lvm_format_fstype }}"
+    dev: /dev/{{ lvm_vg_name }}/{{ lvm_lv_name }}
+    resizefs: yes
+  when: lvm_format_disk
+  tags:
+    - lvm:format
+    - lvm:provision
+
+- name: Ensure volume is mounted
+  mount:
+    src: /dev/{{ lvm_vg_name }}/{{ lvm_lv_name }}
+    path: "{{ lvm_mount_path }}"
+    fstype: "{{ lvm_format_fstype }}"
+    passno: 2
+    state: mounted
+  when: >
+    lvm_format_disk
+    and lvm_mount_path != ""
+  tags:
+    - lvm:mount
+    - lvm:provision

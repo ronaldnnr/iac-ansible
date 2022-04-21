@@ -1,0 +1,22 @@
+---
+  service:
+    tomcat:
+      enabled: true
+      running: true
+
+  file:
+    /opt/tomcat:
+      filetype: symlink
+      exists: true
+
+  user:
+    tomcat:
+      exists: true
+      groups:
+        - tomcat
+
+  port:
+    tcp:8080:
+      listening: true
+      ip:
+        - 0.0.0.0

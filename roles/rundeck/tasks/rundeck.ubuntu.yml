@@ -1,0 +1,36 @@
+---
+
+  - name: Download openjdk
+    package:
+      name: "{{ jdk_package }}"
+    tags: rundeck
+
+  - name: Download rundeck deb package
+    get_url:
+      url: http://dl.bintray.com/rundeck/rundeck-deb/{{ rundeck_package }}
+      dest: /opt/{{ rundeck_package }}
+    tags: rundeck
+
+  - name: Install rundeck
+    apt:
+      deb: /opt/{{ rundeck_package }}
+    tags: rundeck
+
+  - name: Config rundeck properties
+    template:
+      src: etc/rundeck/rundeck-config.properties
+      dest: /etc/rundeck
+    tags: rundeck
+
+  - name: Rundeck framework properties
+    template:
+      src: etc/rundeck/framework.properties
+      dest: /etc/rundeck
+    tags: rundeck
+
+  - name: Rundeck default acl aclpolicy
+    template:
+      src: etc/rundeck/readonly.aclpolicy
+      dest: /etc/rundeck
+    notify: restart rundeck
+    tags: rundeck

@@ -1,0 +1,7 @@
+---
+file:
+  /etc/passwd:
+    exists: true
+    owner: root
+    group: root
+    mode: "0644"

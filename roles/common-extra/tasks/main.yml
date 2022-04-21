@@ -1,0 +1,59 @@
+---
+  - name: Include Common Role
+    include_role: 
+      name: common
+    tags: common-extra
+  - name: Configure Bash
+    copy:
+      src: custom.sh
+      dest: /etc/profile.d/custom.sh
+      mode: 0755
+      owner: root
+      group: root
+    tags: common-extra
+  
+  - name: Configure HTOP
+    copy:
+      src: htoprc
+      dest: /etc/htoprc
+      mode: 0644
+      owner: root
+      group: root
+    tags: common-extra
+  
+  - name: Configure Screen
+    copy:
+      src: screenrc
+      dest: /etc/screenrc
+      mode: 0644
+      owner: root
+      group: root
+    tags: common-extra
+  
+  - name: Configure Vim
+    copy:
+      src: vimrc.local
+      dest: /root/.vimrc
+      mode: 0644
+      owner: root
+      group: root
+    tags: common-extra
+
+  - name: add legal login banner file
+    copy:
+      src: issue.net
+      dest: /etc/issue.net
+      mode: 0644
+      owner: root
+      group: root
+    tags: common-extra
+  
+  - name: configure legal login banner
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^Banner '
+      insertafter: '^#Banner '
+      line: 'Banner /etc/issue.net'
+    notify: restart sshd
+    tags: common-extra
+...

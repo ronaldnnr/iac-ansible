@@ -1,0 +1,15 @@
+---
+- src: https://github.com/leo-labs/ansible-role-goss-verifier.git
+  scm: git
+  version: master
+  name: goss
+
+- src: https://github.com/leo-labs/ansible-role-molecule-ec2-manager.git
+  scm: git
+  version: master
+  name: molecule-ec2-manager
+
+- src: git@gitlab.com:leo-labs/ansible/roles/epel.git
+  scm: git
+  version: v0.1.0
+  name: epel

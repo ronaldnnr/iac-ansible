@@ -1,0 +1,21 @@
+image: quay.io/ansible/molecule:latest
+
+stages:
+  - test
+
+before_script:
+  - ansible --version
+  - ansible-lint --version
+  - molecule --version
+
+services:
+  - docker:stable-dind
+
+Test:
+  stage: test
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    ANSIBLE_FORCE_COLOR: "true"
+    PY_COLORS: "1"
+  script:
+    - molecule test

@@ -1,0 +1,17 @@
+---
+mongodb_major_version: "4.0"
+
+mongodb_apt_repo_keys:
+  "3.6": 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+  "4.0": 9DA31620334BD75D9DCB49F368818C72E52529D4
+
+mongodb_storage_dbpath: /var/lib/mongodb
+
+mongodb_net_port: 27017
+mongodb_net_bindip: 127.0.0.1
+
+mongodb_net_ssl_mode: disabled
+mongodb_net_ssl_pemkeyfile: ""
+mongodb_net_ssl_cafile: ""
+
+mongodb_security_authorization: disabled

@@ -1,0 +1,15 @@
+---
+- name: Cliente - Graylog Server
+  hosts: graylog
+
+  roles:
+    - role: lvm
+      tags: lvm
+    - role: geerlingguy.java
+      tags: java
+    - role: mongodb
+      tags: mongodb
+    - role: elasticsearch
+      tags: elasticsearch
+    - role: graylog
+      tags: graylog

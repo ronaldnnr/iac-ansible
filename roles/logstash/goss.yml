@@ -1,0 +1,18 @@
+---
+  file:
+    /etc/logstash/logstash.yml:
+      exists: true
+      
+  package:
+    logstash:
+      installed: true
+
+  file:
+    {{ if eq .Vars.ansible_facts.ansible_os_family "RedHat" }}
+    /etc/java/java.conf:
+      exists: true
+    {{ end }}
+    {{ if eq .Vars.ansible_facts.ansible_os_family "Debian" }}
+    /etc/java-8-openjdk/jvm-amd64.cfg:
+      exists: true
+    {{ end }}

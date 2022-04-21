@@ -1,0 +1,7 @@
+---
+
+  - import_tasks: jenkins.centos.yml
+    when: ansible_os_family == "RedHat"
+
+  - import_tasks: jenkins.debian.yml
+    when: ansible_os_family == "Debian"

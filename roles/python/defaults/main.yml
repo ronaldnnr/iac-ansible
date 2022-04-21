@@ -1,0 +1,15 @@
+---
+  python_version: 3.6
+  centos_python_version: "{{ python_version | replace('.', '') }}"
+
+  packages:
+    RedHat-python36:
+      - python{{ centos_python_version }}u
+      - python{{ centos_python_version }}u-pip
+      - python{{ centos_python_version }}u-devel
+      - python{{ centos_python_version }}u-tools
+    RedHat-python24:
+      - python
+      - python-pip
+      - python-devel
+      - python-tools

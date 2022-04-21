@@ -1,0 +1,22 @@
+---
+- name: Configure repository key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "{{ mongodb_apt_repo_keys[mongodb_major_version] }}"
+    keyring: /etc/apt/trusted.gpg.d/mongodb-org.gpg
+    state: present
+  tags: mongodb:repo
+
+- name: Configure repository
+  apt_repository:
+    repo: "{{ mongodb_apt_repo[mongodb_major_version] }}"
+    filename: mongodb-org-{{ mongodb_major_version }}
+    state: present
+    update_cache: yes
+  tags: mongodb:repo
+
+- name: Install MongoDB packages
+  apt:
+    name: mongodb-org
+    state: present
+  tags: mongodb:packages

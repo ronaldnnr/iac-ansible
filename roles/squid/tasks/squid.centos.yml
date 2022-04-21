@@ -1,0 +1,26 @@
+---
+  - name: "Install squid"
+    package:
+      name: squid
+      state: present
+    tags: SQUID
+
+  - name: "Move squid.conf template"
+    template:
+      src: centos.squid.conf.j2
+      dest: /etc/squid/squid.conf
+    notify:
+      - Restart squid
+    tags: squid3
+
+  - name: "Increase max openfiles for all system users"
+    lineinfile:
+      path: /etc/security/limits.conf
+      line: '*-nofile 65535'
+    tags: squid3
+
+  - name: "Increase max openfiles for squid service"
+    lineinfile:
+      path: /etc/sysconfig/squid
+      line: 'ulimit -n 65535'
+    tags: squid3

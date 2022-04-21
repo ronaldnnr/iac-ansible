@@ -1,0 +1,39 @@
+---
+- name: Remove guest user
+  rabbitmq_user:
+    user: guest
+    state: absent
+
+# FIXME: devido a um bug[1] no módulo 'rabbitmq_user', usamos a seguinte estratégia:
+#
+# 1) Não utilizamos o bloco 'permissions' na task abaixo;
+# 2) Ignoramos mudanças na task abaixo;
+# 3) Asseguramos as permissões de administrador via módulo 'shell'.
+#
+# Isso deverá ser desfeito quando o PR[2] de correção for aplicado e estiver presente
+# em todas as versões do Ansible suportadas por esta role.
+#
+# [1] https://github.com/ansible/ansible/issues/48890
+# [2] https://github.com/ansible/ansible/pull/50381
+- name: Ensure admin user exists
+  rabbitmq_user:
+    user: "{{ rabbitmq_admin_user }}"
+    password: "{{ rabbitmq_admin_initial_password }}"
+    update_password: on_create
+    # permissions:
+    #   - vhost: "{{ rabbitmq_default_vhost }}"
+    #     configure_priv: ".*"
+    #     read_priv: ".*"
+    #     write_priv: ".*"
+    tags: "{{ rabbitmq_admin_user_tags | join(',') }}"
+    state: present
+  changed_when: false
+
+- name: Set admin user permissions
+  shell: |
+    set -e -o pipefail
+    rabbitmqctl clear_permissions --vhost '{{ rabbitmq_default_vhost }}' '{{ rabbitmq_admin_user }}'
+    rabbitmqctl set_permissions --vhost '{{ rabbitmq_default_vhost }}' '{{ rabbitmq_admin_user }}' '.*' '.*' '.*'
+  args:
+    executable: /bin/bash  # /bin/sh não suporta 'set -o pipefail'
+  changed_when: false

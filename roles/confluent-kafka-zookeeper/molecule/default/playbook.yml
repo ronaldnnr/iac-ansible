@@ -1,0 +1,6 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - confluent-kafka-common
+    - confluent-kafka-zookeeper

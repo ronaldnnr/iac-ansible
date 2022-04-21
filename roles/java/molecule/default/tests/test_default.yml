@@ -1,0 +1,14 @@
+---
+package:
+{{if eq .Env.TEST_DISTRO "centos7"}}
+  java-1.8.0-openjdk:
+{{else if eq .Env.TEST_DISTRO "ubuntu1604"}}
+  openjdk-8-jdk:
+{{else if eq .Env.TEST_DISTRO "ubuntu1804"}}
+  openjdk-11-jdk:
+{{end}}
+    installed: true
+
+command:
+  java -version:
+    exit-status: 0

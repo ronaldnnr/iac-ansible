@@ -1,0 +1,5 @@
+---
+# defaults file for sftp
+
+sftp_username: santander
+sftp_authorized_key_file: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"

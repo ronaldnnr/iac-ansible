@@ -1,0 +1,22 @@
+---
+# tasks file for supervisord
+
+  - name: Install supervisor
+    package:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - "{{ distro[ansible_os_family]['package'] }}"
+    notify:
+      - restart supervisord
+    tags:
+      - supervisord
+
+  - name: Configure supervisord on {{ distro[ansible_os_family]['config_path'] }}
+    template:
+      src: "supervisord.{{ ansible_distribution }}.{{ ansible_distribution_major_version }}.conf.j2"
+      dest: "{{ distro[ansible_os_family]['config_path'] }}"
+    notify:
+      - restart supervisord
+    tags:
+      - supervisord

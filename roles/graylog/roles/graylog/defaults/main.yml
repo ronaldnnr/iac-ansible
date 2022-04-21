@@ -1,0 +1,104 @@
+---
+# Formato esperado: X.Y
+graylog_version: "2.5"
+
+# Habilita inputs
+graylog_inputs_install: yes
+
+graylog_inputs:
+  # UDP
+  - title: GELF UDP
+    type: org.graylog2.inputs.gelf.udp.GELFUDPInput
+    global: true
+    configuration:
+      bind_address: 0.0.0.0
+      port: 11201
+      recv_buffer_size: 262144
+      override_source: null
+      decompress_size_limit: 8388608
+  # TCP
+  - title: GELF TCP
+    type: org.graylog2.inputs.gelf.tcp.GELFTCPInput
+    global: true
+    configuration:
+      bind_address: 0.0.0.0
+      port: 11201
+      recv_buffer_size: 262144
+      override_source: null
+      decompress_size_limit: 8388608
+  # Beats
+  - title: Beats
+    type: org.graylog.plugins.beats.BeatsInput
+    global: true
+    configuration:
+      bind_address: 0.0.0.0
+      port: 15044
+      recv_buffer_size: 1048571
+      tls_enable: false
+      tcp_keepalive: false
+      tls_key_file: ''
+      tls_key_password: ''
+      tls_client_auth_cert_file: ''
+      tls_client_auth: disabled
+      tls_cert_file: ''
+
+# Pode ser usado no inventário de um cluster com múltiplos servidores
+graylog_is_master: "true"
+
+# Se vazio, será gerado utilizando o valor de {{ inventory_hostname }}
+graylog_password_secret: ""
+
+# Root user
+graylog_root_username: admin
+graylog_root_password: PLEASE!CHANGEME!
+graylog_root_email: ""
+graylog_root_timezone: UTC
+
+# Plugins
+graylog_plugin_dir: /usr/share/graylog-server/plugin
+
+# REST
+graylog_rest_listen_uri: http://127.0.0.1:9000/api/
+graylog_rest_transport_uri: ""
+graylog_rest_enable_gzip: "true"
+
+# Web
+graylog_web_enable: "true"
+graylog_web_listen_uri: ""
+graylog_web_endpoint_uri: ""
+graylog_web_enable_gzip: "true"
+
+# Elasticsearch
+graylog_elasticsearch_hosts: http://127.0.0.1:9200
+graylog_elasticsearch_connect_timeout: 10s
+graylog_elasticsearch_socket_timeout: 60s
+graylog_elasticsearch_max_total_connections: 20
+graylog_elasticsearch_request_timeout: 1m
+
+# Journal
+graylog_message_journal_dir: /var/lib/graylog-server/journal
+
+# MongoDB
+graylog_mongodb_uri: mongodb://localhost/graylog
+graylog_mongodb_max_connections: 1000
+
+# Content packs
+graylog_content_packs_dir: /usr/share/graylog-server/contentpacks
+
+# Plugins
+# Veja o arquivo 'vars/plugins.yml' para os plugins pré-configurados na role
+
+# graylog_plugins:
+#   - name: graylog-plugin-example
+#     url: https://example.com/graylog-plugin-example-1.0.1.jar
+#     sha256: 60fb2c1cfd7648d037ea23ff737ebafc9404d0ddc1cad1da908b71b30ab0d728
+graylog_plugins: []
+
+# graylog_install_plugins:
+#   - graylog-plugin-example
+#   - graylog-plugin-slack
+graylog_install_plugins: []
+
+# graylog_remove_plugins:
+#   - graylog-plugin-foo
+graylog_remove_plugins: []

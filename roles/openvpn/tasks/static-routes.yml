@@ -1,0 +1,30 @@
+---
+- name: Delete the specified system static routes (temporary)
+  shell: ip route delete {{ item }}
+  loop: "{{ openvpn_system_static_route_delete }}"
+  register: openvpn_delete_route
+  changed_when: openvpn_delete_route.rc == 0
+  failed_when: >
+    openvpn_delete_route.rc != 0
+    and 'No such process' not in openvpn_delete_route.stderr
+
+- name: Delete the specified system static routes (permanent)
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/route-{{ ansible_default_ipv4.interface }}
+    line: "{{ item }}"
+    state: absent
+  loop: "{{ openvpn_system_static_route_delete }}"
+
+- name: Add system static routes (temporary)
+  command: ip route replace {{ item }}
+  when: item not in openvpn_system_static_route_delete
+  loop: "{{ openvpn_system_static_route_add }}"
+  changed_when: false
+
+- name: Add system static routes (permanent)
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/route-{{ ansible_default_ipv4.interface }}
+    line: "{{ item }}"
+    state: present
+  when: item not in openvpn_system_static_route_delete
+  loop: "{{ openvpn_system_static_route_add }}"

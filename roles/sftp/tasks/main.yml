@@ -1,0 +1,48 @@
+---
+# tasks file for sftp
+
+- name: Create a 2048-bit SSH key for user {{ sftp_username }} in ~{{ sftp_username }}/.ssh/id_rsa
+  user:
+    name: '{{ sftp_username }}'
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+
+- name: Set authorized key for user {{ sftp_username }} copying it from current user
+  authorized_key:
+    user: '{{ sftp_username }}'
+    state: present
+    # key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+    key: '{{ sftp_authorized_key_file }}'
+
+- name: Create /var/sftp/uploads directory
+  file:
+    path: /var/sftp/uploads
+    state: directory
+
+- name: Create /var/sftp directory
+  file:
+    path: /var/sftp
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Change the ownership on the uploads directory to {{ sftp_username }}.
+  file:
+    path: /var/sftp/uploads
+    owner: '{{ sftp_username }}'
+    group: '{{ sftp_username }}'
+
+- name: insert/update "Match User" configuration block in /etc/ssh/sshd_config
+  blockinfile:
+    path: /etc/ssh/sshd_config
+    block: |
+      Match User {{ sftp_username }}
+      ForceCommand internal-sftp
+      PasswordAuthentication no
+      ChrootDirectory /var/sftp
+      PermitTunnel no
+      AllowAgentForwarding no
+      AllowTcpForwarding no
+      X11Forwarding no
+  notify: reload_sshd

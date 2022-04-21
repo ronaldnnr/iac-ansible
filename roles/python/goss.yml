@@ -1,0 +1,11 @@
+---
+
+  package:
+    python36u:
+      installed: true
+    python36u-pip:
+      installed: true
+    python36u-devel:
+      installed: true
+    python36u-tools:
+      installed: true

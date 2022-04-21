@@ -1,0 +1,15 @@
+---
+- name: Stop RabbitMQ app on node
+  command: rabbitmqctl stop_app
+
+- name: Reset node
+  command: rabbitmqctl reset
+
+- name: Add node to cluster
+  command: rabbitmqctl join_cluster {{ rabbitmq_cluster_master_address }}
+  register: rabbitmq_join_cluster
+  until: rabbitmq_join_cluster.rc == 0
+  retries: 2
+
+- name: Start RabbitMQ app
+  command: rabbitmqctl start_app

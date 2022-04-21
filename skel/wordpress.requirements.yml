@@ -1,0 +1,17 @@
+---
+
+  - name: common
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/common/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: nginx
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/nginx/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: mysql
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/mysql/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: wordpress
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/wordpress/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: php-fpm
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/php-fpm/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+...

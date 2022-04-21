@@ -1,0 +1,22 @@
+---
+# defaults file for app_nodejs
+app_path: /data
+app_repository: https://github.com/azat-co/nodejs-hello-world.git
+app_start_file: "{{ app_path }}/app/server.js"
+app_default_port: 1337
+
+app_user: deploy
+app_group: "{{ app_user }}"
+
+app_shared_folders:
+  - "{{ app_path }}"
+  - "{{ app_path }}/.ssh"
+  - "{{ app_path }}/shared"
+  - "{{ app_path }}/logs"
+
+app_base_packages:
+  - git
+  - sudo
+
+app_config:
+  DISTRO: linux

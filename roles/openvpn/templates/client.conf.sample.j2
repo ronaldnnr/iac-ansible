@@ -1,0 +1,23 @@
+client
+remote {{ openvpn_server_ip }} {{ openvpn_server_port }}
+proto {{ openvpn_server_protocol }}
+
+dev tun
+
+persist-key
+persist-tun
+resolv-retry infinite
+nobind
+
+auth-user-pass
+
+{% if openvpn_comp_lzo %}
+comp-lzo
+{% endif %}
+
+verb 3
+
+cipher {{ openvpn_cipher }}
+
+# Direção da autenticação TLS
+key-direction 1

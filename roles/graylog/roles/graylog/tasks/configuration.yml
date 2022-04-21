@@ -1,0 +1,30 @@
+---
+- name: Configure Graylog server
+  template:
+    src: server.conf.j2
+    dest: /etc/graylog/server/server.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart Graylog server
+
+- name: Ensure plugin directory exists
+  file:
+    path: "{{ graylog_plugin_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  notify: Restart Graylog server
+
+- name: Ensure data directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: graylog
+    group: graylog
+    mode: 0755
+  loop:
+    - "{{ graylog_message_journal_dir }}"
+    - "{{ graylog_content_packs_dir }}"
+  notify: Restart Graylog server

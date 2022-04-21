@@ -1,0 +1,20 @@
+---
+# tasks file for grafana
+
+ - name: Adding repository grafana
+   template:
+     src: grafana.repo.j2
+     dest: /etc/yum.repos.d/grafana.repo
+
+ - name: Install grafana
+   yum:
+     name: grafana
+     state: present
+
+ - name: Config grafana
+   service:
+     name: grafana-server
+     state: started
+     enabled: yes
+
+

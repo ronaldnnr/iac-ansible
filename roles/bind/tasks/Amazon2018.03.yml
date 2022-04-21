@@ -1,0 +1,11 @@
+---
+  - name: Install bind
+    package:
+      name: bind
+      state: latest
+    tags: bind
+
+  - name: Set Service name for Handlers
+    set_fact:
+      bind_service: named
+    tags: bind

@@ -1,0 +1,21 @@
+---
+  - name: Install nfs
+    yum:
+      name: nfs-utils
+      state: present
+    tags: nfs_client
+
+  - name: Create folders for NFS Share
+    file:
+      path: "{{ nfs_client_folder }}"
+      state: directory
+      recurse: yes
+    tags: nfs_client
+
+  - name: Mount nfs folders
+    mount:
+      path: "{{ nfs_client_folder }}"
+      src: "{{ nfs_server_ip }}:{{ nfs_server_folder }}"
+      fstype: nfs
+      state: mounted
+    tags: nfs_client

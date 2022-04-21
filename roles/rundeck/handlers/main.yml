@@ -1,0 +1,7 @@
+---
+
+  - name: restart rundeck
+    service:
+      name: rundeckd
+      state: restarted
+      enabled: yes

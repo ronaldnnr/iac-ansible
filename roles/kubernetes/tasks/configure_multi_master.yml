@@ -1,0 +1,86 @@
+- name: Create folders
+  file:
+    path: /root/.ssh
+    state: directory
+
+- name: Add deployment key
+  template:
+    src: templates/ssh-keys/id_rsa
+    dest: /root/.ssh/id_rsa
+    mode: 0600
+
+- name: Add authorized keys
+  template:
+    src: templates/ssh-keys/authorized_keys
+    dest: /root/.ssh/authorized_keys
+    mode: 0600
+
+- name: Add config file
+  template:
+    src: templates/ssh-keys/config
+    dest: /root/.ssh/config
+
+- name: create kube-flannel.yml
+  template:
+    src: templates/kube-flannel.yml
+    dest: /tmp/kube-flannel.yml
+    mode: 0644
+
+- name: create kubeadm.yaml
+  template:
+    src: templates/kubeadm.yaml.j2
+    dest: /tmp/kubeadm.yaml
+    mode: 0644
+
+- name: create kubeadm init
+  shell: kubeadm init --config /tmp/kubeadm.yaml > /tmp/kube_init
+  run_once: true
+  delegate_to: "{{kube_master1}}"
+  tags:
+    - kubernetes
+
+- name: command for .kube
+  shell: "rm -rf $HOME/.kube; mkdir -p $HOME/.kube; sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config; sudo chown $(id -u):$(id -g) $HOME/.kube/config"
+  run_once: true
+  delegate_to: "{{kube_master1}}"
+
+- name: create flannel
+  command: kubectl apply -f /tmp/kube-flannel.yml
+  run_once: true
+  delegate_to: "{{kube_master1}}"
+  tags:
+    - kubernetes
+
+- name: copy pki keys
+  shell: sudo rsync -arzp /etc/kubernetes/pki root@{{ kube_master2_ip }}:/etc/kubernetes/
+  run_once: true
+  delegate_to: "{{kube_master1}}"
+  tags:
+    - kubernetes
+
+- name: copy pki keys
+  shell: sudo rsync -arzp /etc/kubernetes/pki root@{{ kube_master3_ip }}:/etc/kubernetes/
+  become: yes
+  run_once: true
+  delegate_to: "{{kube_master1}}"
+  tags:
+    - kubernetes
+
+- name: create kubeadm init
+  shell: kubeadm init --config /tmp/kubeadm.yaml > /tmp/kube_init
+  run_once: true
+  delegate_to: "{{kube_master2}}"
+  tags:
+    - kubernetes
+
+- name: create kubeadm init
+  shell: kubeadm init --config /tmp/kubeadm.yaml > /tmp/kube_init
+  run_once: true
+  delegate_to: "{{kube_master3}}"
+  tags:
+    - kubernetes
+
+- name: command for .kube
+  shell: "rm -rf $HOME/.kube; mkdir -p $HOME/.kube; sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config; sudo chown $(id -u):$(id -g) $HOME/.kube/config"
+
+

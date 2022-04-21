@@ -1,0 +1,15 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  roles:
+    - role: molecule-ec2-manager
+      vars:
+        mec2_action: create
+        mec2_security_group_extra_rules:
+          - proto: tcp
+            from_port: 15672  # rabbitmq-management
+            to_port: 15672
+            cidr_ip: 0.0.0.0/0

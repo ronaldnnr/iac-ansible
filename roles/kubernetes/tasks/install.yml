@@ -1,0 +1,86 @@
+- name: Configure docker daemon.yml
+  template:
+    src: templates/daemon.json.j2
+    dest: /etc/docker/daemon.json
+  notify: restart docker
+
+- name: Update distro
+  yum:
+    name: '*'
+    state: latest
+  tags:
+      - kubernetes
+
+- name: Add repository
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes YUM repo
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    gpgcheck: yes
+  tags:
+    - kubernetes
+
+- name: Disable SELINUX
+  selinux:
+    state: disabled
+  tags:
+    - kubernetes
+  register: state
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Restart server
+  command: /sbin/shutdown -r +1
+  async: 0
+  poll: 0
+  ignore_errors: true
+  when: ( state.state != 'disabled' )
+
+- name: install kubernetes dependencies
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - kubelet
+    - kubeadm
+    - kubectl
+  
+- name: Configure kubeadm.conf
+  template:
+    src: templates/10-kubeadm.conf.j2
+    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    mode: 0644
+
+- name: Configure k8s.conf
+  template:
+    src: templates/k8s.conf.j2
+    dest: /etc/sysctl.d/k8s.conf
+    mode: 0644
+
+- name: Set kubelet.service
+  file:
+    path: /etc/systemd/system/kubelet.service
+    mode: 0644
+
+- name: systemctl system
+  command: sysctl --system
+  tags:
+    - kubernetes
+
+- name: restart all services
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - docker
+    - kubelet

@@ -1,0 +1,43 @@
+---
+# Geral
+openvpn_server_ip: 123.45.6.7
+openvpn_server_port: 1194
+openvpn_server_protocol: udp
+
+# Server
+openvpn_server_network: 10.255.252.0
+openvpn_server_netmask: 255.255.252.0
+
+# Route networks
+openvpn_route_network: 10.0.0.0/16
+openvpn_route_network_mask: "10.0.0.0 255.255.0.0"
+
+# Certificate
+openvpn_key_country: BR
+openvpn_key_province: SP
+openvpn_key_city: Sao Paulo
+openvpn_key_org: Your Organization
+openvpn_key_email: contact@example.com
+
+# Server options
+openvpn_duplicate_cn: false
+openvpn_keepalive: 10 120
+openvpn_cipher: AES-256-CBC
+openvpn_comp_lzo: false
+
+# Extras routes in CIDR format to be set in clients
+#
+# openvpn_push_extra_cidrs:
+#   - 10.200.20.0/24
+#   - 123.45.6.7/32
+openvpn_push_extra_cidrs: []
+
+# Static routes specifications compatible to 'ip route add|del <spec>'
+#
+# openvpn_system_static_route_add:
+#   - 172.16.5.0/24 via 10.0.0.101 dev eth0
+#   - 192.168.1.0/24 dev {{ ansible_default_ipv4.interface }}
+openvpn_system_static_route_add: []
+
+# Static routes to be removed, analogous to 'openvpn_system_static_route_add'
+openvpn_system_static_route_delete: []

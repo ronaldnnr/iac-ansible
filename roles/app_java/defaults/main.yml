@@ -1,0 +1,24 @@
+---
+# defaults file for app_java
+
+app_path: /data
+app_artifact: https://github.com/HelionDevPlatform/helion-hello-world-java/raw/master/build/hello-world-java-1.0.war
+
+app_default_port: 8080
+
+app_user: deploy
+app_group: "{{ app_user }}"
+
+app_shared_folders:
+  - "{{ app_path }}"
+  - "{{ app_path }}/.ssh"
+  - "{{ app_path }}/shared"
+  - "{{ app_path }}/logs"
+
+app_base_path: "{{ app_path }}/app"
+app_base_packages:
+  - git
+  - sudo
+
+tomcat_enabled: false
+jetty_enabled: false

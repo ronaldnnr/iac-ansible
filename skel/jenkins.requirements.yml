@@ -1,0 +1,10 @@
+---
+
+  - name: common
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/common/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: nginx
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/nginx/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: jenkins
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/jenkins/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7

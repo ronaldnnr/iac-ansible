@@ -1,0 +1,14 @@
+---
+# Arquivo de handlers da role.
+
+- name: load sysctl
+  command: sysctl -p
+
+- name: reload systemd
+  command: systemctl daemon-reload
+
+- name: restart kafka
+  systemd:
+    name: "{{kafka_broker.service_name}}"
+    state: restarted
+

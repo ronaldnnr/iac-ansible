@@ -1,0 +1,60 @@
+---
+# tasks file for pyenv
+
+  - name: Install base packages
+    package:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - "{{ packages[ansible_os_family] }}"
+    tags:
+      - pyenv
+
+  - name: Create necessary directories
+    file:
+      path: "{{ pyenv_path }}"
+      state: directory
+      recurse: yes
+    tags:
+      - pyenv
+
+  - name: Install pyenv on {{ pyenv_path }}/pyenv
+    git:
+      repo: "{{ pyenv_repository }}"
+      dest: "{{ pyenv_path }}/pyenv"
+    tags:
+      - pyenv
+
+  - name: Create env file for pyenv
+    template:
+      src: pyver.j2
+      dest: "{{ pyenv_path }}/pyver"
+    tags:
+      - pyenv
+
+  - name: Check if python {{ pyenv_python_version }} already installed
+    stat:
+      path: "{{ pyenv_path }}/pyenv/versions/{{ pyenv_python_version }}"
+    register: pyenv_version
+    tags:
+      - pyenv
+
+  - name: Install python {{ pyenv_python_version }}
+    shell: |
+      . "{{ pyenv_path }}/pyver"
+      pyenv install "{{ pyenv_python_version }}"
+    when: pyenv_version.stat.exists == False
+    tags:
+      - pyenv
+
+  - name: Check if installation works
+    shell: ". {{ pyenv_path }}/pyver && python --version 2>&1"
+    register: pyenv_version_installed
+    tags:
+      - pyenv
+
+  - name: See installed python version
+    debug:
+      msg: "installed version: {{ pyenv_version_installed.stdout }}"
+    tags:
+      - pyenv

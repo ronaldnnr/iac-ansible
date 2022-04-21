@@ -1,0 +1,7 @@
+---
+# Nomes dos pacotes do Java a serem instalados
+#
+# Exemplo:
+# java_packages:
+#   - openjdk-8-jre-headless
+java_packages: []

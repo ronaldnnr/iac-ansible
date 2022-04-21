@@ -1,0 +1,34 @@
+---
+# tasks file for ansible-prometheus
+- name: Create Prometheus group
+  group:
+    name: "{{ prometheus_group }}"
+    state: present
+
+- name: Create Prometheus user
+  user:
+    name: "{{ prometheus_owner }}"
+    group: "{{ prometheus_group }}"
+    createhome: no
+    shell: /sbin/nologin
+    state: present
+
+- name: "Create {{ prometheus_install_dir }}"
+  file:
+    path: "{{ prometheus_install_dir }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: 0755
+
+- name: Install Prometheus
+  include: install-prometheus.yml
+  when: prometheus_install
+
+- name: Install Prometheus node exporter
+  include: install-node_exporter.yml
+  when: prometheus_node_exporter_install
+
+- name: Install Prometheus alert manager
+  include: install-alert_manager.yml
+  when: prometheus_alert_manager_install

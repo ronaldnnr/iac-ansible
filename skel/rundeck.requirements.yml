@@ -1,0 +1,7 @@
+---
+  - name: common
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/common/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+
+  - name: rundeck
+    src: https://git.tray.net.br/infra/sre/iac-ansible/roles/rundeck/repository/master/archive.tar.gz?private_token=D2SZKVPuCg2Sks-yy8D7
+...

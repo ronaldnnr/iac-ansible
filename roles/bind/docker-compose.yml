@@ -1,0 +1,70 @@
+---
+  version: '2'
+  services:
+    centos6:
+      image: deadc/ansible_centos6
+      cap_add:
+        - NET_ADMIN
+        - SYS_ADMIN
+        - SYS_RESOURCE
+        - SYS_TIME
+      security_opt:
+        - seccomp:unconfined
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro
+        - .:/ansible/roles/test
+      devices:
+        - /dev/net/tun:/dev/net/tun
+
+    centos7:
+      image: deadc/ansible_centos7
+      cap_add:
+        - NET_ADMIN
+        - SYS_ADMIN
+      security_opt:
+        - seccomp:unconfined
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro
+        - .:/ansible/roles/test
+      devices:
+        - /dev/net/tun:/dev/net/tun
+
+    debian9:
+      image: deadc/ansible_debian9
+      cap_add:
+        - NET_ADMIN
+        - SYS_ADMIN
+      security_opt:
+        - seccomp:unconfined
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro
+        - .:/ansible/roles/test
+      devices:
+        - /dev/net/tun:/dev/net/tun
+    
+    amazonlinux2:
+      image: guipedreira/amazonlinux2
+      cap_add:
+        - NET_ADMIN
+        - SYS_ADMIN
+      security_opt:
+        - seccomp:unconfined
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro
+        - .:/ansible/roles/test
+      devices:
+        - /dev/net/tun:/dev/net/tun
+
+    amazonlinux:
+      image: guipedreira/amazonlinux1
+      cap_add:
+        - NET_ADMIN
+        - SYS_ADMIN
+      security_opt:
+        - seccomp:unconfined
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro
+        - .:/ansible/roles/test
+      devices:
+        - /dev/net/tun:/dev/net/tun
+...

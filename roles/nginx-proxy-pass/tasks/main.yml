@@ -1,0 +1,8 @@
+---
+  - name: Create nginx proxy configuration
+    template:
+      src: proxy_pass.conf.j2
+      dest: /etc/nginx/conf.d/proxy_pass.conf
+    notify:
+      - restart nginx
+    tags: nginx-proxy-pass

@@ -1,0 +1,93 @@
+---
+
+  - name: Install unzip package
+    package:
+      name: unzip
+      state: present
+    tags:
+      - wildfly
+
+  - name: Add group {{ wildfly_group }}
+    group:
+      name: "{{ wildfly_group }}"
+      state: present
+    tags:
+      - wildfly
+
+  - name: Add {{ wildfly_user }} user
+    user:
+      name: "{{ wildfly_user }}"
+      shell: /bin/bash
+      createhome: no
+      home: "{{ wildfly_dest }}/jetty"
+      groups: "{{ wildfly_group }}"
+    tags:
+      - wildfly
+
+  - name: Download e unzip wildfly package
+    unarchive:
+      src: "{{ wildfly_url }}"
+      dest: "{{ wildfly_dest }}"
+      remote_src: yes
+      creates: "{{ wildfly_dest }}/wildfly-{{ wildfly_version }}"
+      owner: "{{ wildfly_user }}"
+      group: "{{ wildfly_group }}"
+    notify:
+      - restart wildfly
+    tags:
+      - wildfly
+
+  - name: Install default file for wildfly
+    template:
+      src: wildfly.default.j2
+      dest: /etc/default/wildfly
+    notify:
+      - restart wildfly
+    when: ansible_service_mgr == "upstart"
+    tags:
+      - wildfly
+
+  - name: Creating symbolic link
+    file:
+      src: "{{ wildfly_dest }}/wildfly-{{ wildfly_version }}"
+      dest: "{{ wildfly_dest }}/wildfly"
+      state: link
+    tags:
+      - wildfly
+
+  - name: Cleanup default deployments path
+    file:
+      path: "{{ wildfly_dest }}/wildfly/standalone/deployments"
+      state: absent
+    tags:
+      - wildfly
+
+  - name: Create {{ wildfly_webapps_path }} if not exists
+    file:
+      path: "{{ wildfly_webapps_path }}"
+      state: directory
+      owner: "{{ wildfly_user }}"
+      group: "{{ wildfly_group }}"
+    tags:
+      - wildfly
+
+  - name: Create symbolic link for folder deployments
+    file:
+      src: "{{ wildfly_webapps_path }}"
+      dest: "{{ wildfly_dest }}/wildfly/standalone/deployments"
+      force: yes
+      state: link
+    notify:
+      - fix permissions wildfly
+    tags:
+      - wildfly
+
+  - name: Install service script for wildfly
+    template:
+      src: "wildfly.{{ ansible_service_mgr }}.j2"
+      dest: "{{ (ansible_service_mgr == 'upstart') | ternary('/etc/init.d/wildfly', '/etc/systemd/system/wildfly.service') }}"
+      mode: "{{ (ansible_service_mgr == 'upstart') | ternary('0755', '0644') }}"
+    notify:
+      - restart wildfly
+    tags:
+      - wildfly

@@ -1,0 +1,7 @@
+---
+# defaults file for elastic-search
+cluster_name: default-cluster
+node_name: "{{ ansible_host }}"
+path_log: /var/log/elasticsearch
+path_data: /var/lib/elasticsearch/data
+java_package: java-1.8.0-openjdk-devel.x86_64

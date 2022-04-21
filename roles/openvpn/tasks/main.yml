@@ -1,0 +1,69 @@
+---
+- name: Ensure required packages are installed
+  yum:
+    name:
+      - easy-rsa
+      - openvpn
+    state: present
+  tags: openvpn:packages
+
+- name: Configure easy-rsa's variables
+  template:
+    src: vars.j2
+    dest: /etc/openvpn/vars
+    owner: root
+    group: root
+    mode: 0600
+  tags: openvpn:easyrsa
+
+- name: Check if the 'keys' directory exists
+  stat:
+    path: /etc/openvpn/keys
+  register: openvpn_keys_directory
+  tags: openvpn:easyrsa
+
+- name: Configure RSA certificates
+  shell: |
+    set -e -o pipefail
+    source /etc/openvpn/vars
+    ./easyrsa init-pki
+    ./easyrsa --batch build-ca nopass
+    ./easyrsa gen-dh
+    ./easyrsa build-server-full server nopass
+    openvpn --genkey --secret /etc/openvpn/keys/ta.key
+  args:
+    executable: /bin/bash  # Support for 'set -o pipefail'
+    chdir: /usr/share/easy-rsa/3
+  when: not openvpn_keys_directory.stat.exists
+  tags: openvpn:easyrsa
+
+- name: Create configuration for server and sample client
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0600
+  loop:
+    - src: server.conf.j2
+      dest: /etc/openvpn/server.conf
+    - src: client.conf.sample.j2
+      dest: /etc/openvpn/client.conf.sample
+  notify: Restart OpenVPN service
+  tags: openvpn:configure
+
+- name: Enable and start the service
+  service:
+    name: openvpn@server
+    state: started
+    enabled: true
+  tags: openvpn:configure
+
+- import_tasks: firewall.yml
+  tags: openvpn:firewall
+
+- import_tasks: static-routes.yml
+  tags: openvpn:static-routes
+
+- import_tasks: vpnuser.yml
+  tags: openvpn:vpnuser

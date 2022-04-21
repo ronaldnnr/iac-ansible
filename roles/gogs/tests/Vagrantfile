@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
+  config.vm.define 'gogs' do |g|
+    g.vm.hostname = 'gogs'
+    g.vm.box = 'ubuntu/xenial64'
+    g.vm.network "private_network", ip: "192.168.56.11"
+    g.hostmanager.aliases = %w(gogs.acme gogs)
+  end
+  
+  config.vm.provision 'shell', inline: <<-SHELL
+    if [ ! -f /usr/bin/python ]; then
+      sudo ln -s /usr/bin/python3 /usr/bin/python
+    fi
+  SHELL
+
+  config.vm.provision :ansible do |ansible|
+		ansible.playbook = "test.yml"
+	end
+
+end

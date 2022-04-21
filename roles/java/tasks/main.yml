@@ -1,0 +1,21 @@
+---
+- name: Include OS-specific variables for RHEL/CentOS
+  include_vars: RedHat-{{ ansible_distribution_major_version }}.yml
+  when: ansible_distribution in ['RedHat', 'CentOS']
+
+- name: Include OS-specific variables for Ubuntu
+  include_vars: Ubuntu-{{ ansible_distribution_major_version }}.yml
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Define Java packages
+  set_fact:
+    java_packages: "{{ __java_packages }}"
+  when: java_packages == []
+
+- name: Include setup tasks for RHEL/CentOS
+  import_tasks: setup-RedHat.yml
+  when: ansible_distribution in ['RedHat', 'CentOS']
+
+- name: Include setup tasks for Ubuntu
+  import_tasks: setup-Ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'

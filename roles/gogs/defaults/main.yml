@@ -1,0 +1,8 @@
+---
+# defaults file for gogs
+gogs_user: git
+gogs_user_home: /home/git
+gogs_repository: /home/git/gogs-repositories
+gogs_binary_url: https://dl.gogs.io/0.11.53/gogs_0.11.53_linux_amd64.tar.gz
+gogs_domain: localhost
+gog_root_url: localhost

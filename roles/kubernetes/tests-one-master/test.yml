@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: True
+  vars:
+    kube_one_master: true
+    kube_multi_master: false
+    master_node: kubemaster
+    kube_node_ip: "{{ ansible_eth1.ipv4.address }}"
+
+  roles:
+    - ../../docker
+    - ../../kubernetes
+

@@ -1,0 +1,12 @@
+---
+  - name: Bastion install playbook
+    hosts: "{{ target | default('all', true) }}"
+    become: yes
+    serial: 1
+
+    vars_files:
+      - "{{ env | default('group_vars/all', true) }}"
+
+    roles:
+      - common
+

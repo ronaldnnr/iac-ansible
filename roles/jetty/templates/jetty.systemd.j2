@@ -1,0 +1,22 @@
+#systemd unit file for jetty
+#
+## Multiple copies of this service (i.e. multiple concurrently running
+## jetty servers) are not supported right now. Expect this to come with
+## future updates
+#
+[Unit]
+Description=Jetty Web Application Server
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+ExecStart={{ jetty_install_path }}/jetty/bin/jetty.sh start
+ExecStop={{ jetty_install_path }}/jetty/bin/jetty.sh stop
+SuccessExitStatus=143
+
+User={{ jetty_user }}
+Group={{ jetty_group }}
+
+[Install]
+WantedBy=multi-user.target

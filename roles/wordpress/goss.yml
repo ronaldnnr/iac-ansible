@@ -1,0 +1,32 @@
+---
+  file:
+    /var/www/html/wordpress:
+      exists: true
+  http:
+    http://localhost/wp-admin/install.php:
+      status: 200
+      timeout: 3600
+  port:
+    tcp:80:
+      listening: true
+      ip:
+        - 0.0.0.0
+  service:
+    nginx:
+      enabled: true
+      running: true
+  package:
+    mysql-community-server:
+      installed: true
+  {{ if eq .Vars.ansible_facts.ansible_os_family "RedHat" }}
+  service:
+      mysqld:
+        running: true
+        enabled: true
+  {{ end }}
+  {{ if eq .Vars.ansible_facts.ansible_os_family "Debian" }}
+  service:
+    mysql:
+      running: true
+      enabled: true
+  {{ end }}

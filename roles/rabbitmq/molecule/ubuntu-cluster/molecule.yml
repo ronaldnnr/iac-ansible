@@ -1,0 +1,36 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: ec2
+lint:
+  name: yamllint
+platforms:
+  - name: molecule-rabbitmq-ubuntu1604-master
+    distro: ubuntu1604
+  - name: molecule-rabbitmq-ubuntu1804-node
+    distro: ubuntu1804
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        rabbitmq_enable_cluster: true
+        rabbitmq_erlang_cookie: UBUNTUCLUSTERCOOKIE
+    host_vars:
+      "molecule-rabbitmq-ubuntu1604-master":
+        rabbitmq_cluster_master: true
+  options:
+    diff: ${TEST_ENABLE_ANSIBLE_DIFF:-true}
+    v: ${TEST_ENABLE_ANSIBLE_VERBOSITY:-false}
+  config_options:
+    defaults:
+      stdout_callback: yaml
+  lint:
+    name: ansible-lint
+scenario:
+  name: ubuntu-cluster
+verifier:
+  name: goss
+  lint:
+    name: yamllint

@@ -1,0 +1,21 @@
+---
+- name: Install dependencies for Ruby
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - gcc
+    - openssl-devel
+    - postgresql-libs
+    - postgresql-devel
+    - sqlite-devel
+    - epel-release
+    - libyaml-devel
+    - readline-devel
+    - zlib-devel
+    - libffi-devel
+    - git
+    - make
+
+- name: Install NodeJS
+  yum: name=nodejs state=present

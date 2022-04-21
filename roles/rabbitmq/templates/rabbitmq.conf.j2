@@ -1,0 +1,53 @@
+# {{ ansible_managed }}
+
+# Based on: https://raw.githubusercontent.com/rabbitmq/rabbitmq-server/4bf892d1/docs/rabbitmq.conf.example
+
+## Networking
+## ====================
+
+listeners.tcp.default = {{ rabbitmq_amqp_port }}
+
+listeners.ssl.default = {{ rabbitmq_tls_port }}
+
+reverse_dns_lookups = {{ rabbitmq_reverse_dns_lookups }}
+
+
+## Security, Access Control
+## ====================
+
+loopback_users.guest = true
+
+password_hashing_module = rabbit_password_hashing_sha256
+
+default_vhost = {{ rabbitmq_default_vhost }}
+default_user = {{ rabbitmq_default_user }}
+default_pass = {{ rabbitmq_default_pass }}
+
+default_permissions.configure = .*
+default_permissions.read = .*
+default_permissions.write = .*
+
+default_user_tags.administrator = true
+default_user_tags.ansible_managed = true
+
+
+## Resource Limits & Flow Control
+## ==============================
+
+{% if rabbitmq_vm_memory_high_watermark_relative != "" %}
+vm_memory_high_watermark.relative = {{ rabbitmq_vm_memory_high_watermark_relative }}
+{% endif %}
+
+## Or you can set absolute value using memory units (with RabbitMQ 3.6.0+).
+## Absolute watermark will be ignored if relative is defined!
+##
+{% if rabbitmq_vm_memory_high_watermark_absolute != "" %}
+vm_memory_high_watermark.absolute = {{ rabbitmq_vm_memory_high_watermark_absolute }}
+{% endif %}
+
+# =======================================
+# Management section
+# =======================================
+
+management.tcp.port = {{ rabbitmq_management_port }}
+management.tcp.ip   = {{ rabbitmq_management_ip }}

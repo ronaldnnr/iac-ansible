@@ -1,0 +1,13 @@
+---
+# defaults file for jetty
+
+jetty_version: 9.4.9.v20180320
+
+jetty_enable_proxy: true
+
+jetty_install_path: /opt
+
+jetty_user: jetty
+jetty_group: jetty
+
+jetty_webapps_path: /webapps

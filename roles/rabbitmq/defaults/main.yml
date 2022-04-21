@@ -1,0 +1,52 @@
+---
+# Signing key
+rabbitmq_signing_key_url: https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+rabbitmq_signing_key_id: 0A9AF2115F4687BD29803A206B73A36E6026DFCA
+rabbitmq_signing_key_keyring_file: rabbitmq-release-signing-key.gpg
+
+# Erlang
+rabbitmq_erlang_version: 22.x
+
+# Plugins
+rabbitmq_enabled_plugins:
+  - rabbitmq_management
+  - rabbitmq_management_agent
+  - rabbitmq_shovel
+  - rabbitmq_shovel_management
+
+# Config
+
+rabbitmq_erlang_cookie: PLEASECHANGEME
+
+rabbitmq_amqp_port: 5672
+rabbitmq_epmd_port: 4369
+rabbitmq_tls_port: 5671
+
+rabbitmq_management_port: 15672
+rabbitmq_management_ip: 0.0.0.0
+
+rabbitmq_reverse_dns_lookups: "false"
+
+rabbitmq_default_vhost: /
+rabbitmq_default_user: ansible
+rabbitmq_default_pass: PLEASECHANGEME
+
+rabbitmq_ulimit_open_files: 1024
+
+rabbitmq_vm_memory_high_watermark_relative: ""  # ex: "0.4"
+rabbitmq_vm_memory_high_watermark_absolute: ""  # ex: "2GB"
+
+# Access control
+
+rabbitmq_admin_user: admin
+
+# NOTE: use 'rabbitmqctl' or the Management console to change the password.
+rabbitmq_admin_initial_password: PLEASECHANGEME
+
+rabbitmq_admin_user_tags: [administrator]
+
+# Clustering
+
+rabbitmq_enable_cluster: false
+
+rabbitmq_cluster_master: false

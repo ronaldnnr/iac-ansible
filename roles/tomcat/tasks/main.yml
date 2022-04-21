@@ -1,0 +1,81 @@
+---
+
+  - name: Add group "tomcat"
+    group:
+      name: tomcat
+      state: present
+    tags:
+      - tomcat
+
+  - name: Add user "tomcat"
+    user:
+      name: tomcat
+      groups: tomcat
+      shell: /bin/bash
+      append: yes
+      home: "{{ tomcat_dest }}"
+      state: present
+    tags:
+      - tomcat
+
+  - name: Creating necessary folders
+    file:
+      path: "{{ tomcat_dest }}"
+      state: directory
+    tags:
+      - tomcat
+
+  - name: Install Tomcat file to {{ tomcat_dest }}
+    unarchive:
+      src: "{{ tomcat_url }}"
+      dest: "{{ tomcat_dest }}"
+      remote_src: yes
+      owner: tomcat
+      group: tomcat
+      creates: "{{ tomcat_dest }}/{{ tomcat_fullname }}"
+    tags:
+      - tomcat
+
+  - name: Install {{ ansible_service_mgr }} script for Tomcat
+    template:
+      src: "tomcat.{{ ansible_service_mgr }}.j2"
+      dest: "{{ (ansible_service_mgr == 'upstart') | ternary('/etc/init.d/tomcat', '/etc/systemd/system/tomcat.service') }}"
+      mode: "{{ (ansible_service_mgr == 'upstart') | ternary('0755', '0644') }}"
+    notify: restart tomcat
+    tags:
+      - tomcat
+
+  - name: Create symbolic link to Tomcat
+    file:
+      src: "{{ tomcat_dest }}/{{ tomcat_fullname }}"
+      dest: "{{ tomcat_dest }}/tomcat"
+      state: link
+    tags:
+      - tomcat
+
+  - name: Cleanup webapps directory
+    file:
+      path: "{{ tomcat_dest }}/tomcat/webapps"
+      state: absent
+    tags:
+      - tomcat
+
+  - name: Create {{ tomcat_webapps_path }} if not exists
+    file:
+      path: "{{ tomcat_webapps_path }}"
+      state: directory
+      owner: tomcat
+      group: tomcat
+    tags:
+      - tomcat
+
+  - name: Create symbolic link for webapps
+    file:
+      src: "{{ tomcat_webapps_path }}"
+      dest: "{{ tomcat_dest }}/tomcat/webapps"
+      force: yes
+      state: link
+    notify:
+      - fix permissions tomcat
+    tags:
+      - tomcat

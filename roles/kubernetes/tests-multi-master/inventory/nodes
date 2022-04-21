@@ -1,0 +1,8 @@
+[kubemasters]
+kubemaster1
+kubemaster2
+kubemaster3
+
+[kubenodes]
+
+

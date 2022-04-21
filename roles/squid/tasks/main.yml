@@ -1,0 +1,12 @@
+---
+    - name: Includ tasks for Debian
+      include_tasks: squid.debian.yml
+      when:
+        ansible_os_family == "Debian"
+      tags: squid
+
+    - name: Includ tasks for centos
+      include_tasks: squid.centos.yml
+      when:
+        ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+      tags: squid

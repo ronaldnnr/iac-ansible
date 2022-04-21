@@ -1,0 +1,14 @@
+---
+
+#when: ansible_distribution == "Debian"
+rundeck_package: "rundeck_2.11.4-1-GA_all.deb"
+jdk_package: "openjdk-8-jdk"
+
+
+
+#You can use "{{ ansible_default_ipv4.address }}" for get specific ipv4 Address
+rundeck_server_hostname: "rundeck-hostname"
+rundeck_server_port: 4440
+
+rundeck_server_name: "{{ rundeck_server_hostname }}"
+rundeck_server_url: "http://{{ rundeck_server_name }}"

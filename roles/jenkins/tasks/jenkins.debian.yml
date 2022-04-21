@@ -1,0 +1,33 @@
+---
+
+  - name: Install base packages
+    apt:
+      name:
+        - apt-transport-https
+        - python-pycurl
+        - openjdk-8-jre
+      state: latest
+      update_cache: yes
+    tags: jenkins
+
+  - name: Install jenkins-ci repository key
+    apt_key:
+      url: https://pkg.jenkins.io/debian/jenkins.io.key
+      state: present
+    tags: jenkins
+
+  - name: Install jenkins-ci repository
+    apt_repository:
+      repo: deb https://pkg.jenkins.io/debian binary/
+      state: present
+      filename: jenkins-ci
+    tags: jenkins
+
+  - name: Install jenkins
+    apt:
+      name: jenkins
+      update_cache: yes
+      state: present
+    notify:
+      - restart jenkins
+    tags: jenkins

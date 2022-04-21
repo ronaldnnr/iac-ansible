@@ -1,0 +1,24 @@
+---
+# defaults file for consul
+consul_download_url: "https://releases.hashicorp.com/consul/1.0.2/consul_1.0.2_linux_amd64.zip"
+consul_binary_path: "/usr/local/bin/"
+
+is_server: "true"
+is_cluster: "true"
+
+consul_bootstrap: "false"
+enable_acl: "false"
+consul_user: "consul"
+consul_group: "consul"
+consul_config_dir: "/etc/consul"
+consul_data_dir: "/opt/consul/data"
+consul_ui: "true"
+consul_datacenter: "datacenter"
+
+acl_default_policy: "allow"
+acl_down_policy: "allow"
+acl_master_token: "1234567890"
+
+consul_node_name: "{{ ansible_hostname }}"
+consul_daemon_loglevel: "DEBUG"
+consul_cluster_crypt_key: "Qv3seRCoTJBYYIvtYOjN0A=="

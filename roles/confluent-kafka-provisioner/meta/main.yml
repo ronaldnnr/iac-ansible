@@ -1,0 +1,14 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Leonardo Fernandes Solutions
+  description: "Role for provisioning a Kafka cluster"
+  company: Leonardo Fernandes Solutions
+  license: license (Proprietary)
+  min_ansible_version: 2.6
+  platforms:
+    - name: EL
+      versions:
+        - 7
+  galaxy_tags: []

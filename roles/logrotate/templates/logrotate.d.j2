@@ -1,0 +1,15 @@
+
+{% for value in logrotate_configs %}
+    {% for key, v in value.iteritems() %}
+
+    "{{ key }}" {
+    {% for item in v %}
+
+      {{ item }}
+      
+    {% endfor %}
+
+    }
+
+    {% endfor %}
+{% endfor %}

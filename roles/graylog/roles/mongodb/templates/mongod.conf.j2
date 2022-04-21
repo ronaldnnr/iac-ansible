@@ -1,0 +1,55 @@
+#jinja2: lstrip_blocks: True
+# {{ ansible_managed }}
+
+# mongod.conf
+
+# for documentation of all options, see:
+#   http://docs.mongodb.org/manual/reference/configuration-options/
+
+# Where and how to store data.
+storage:
+  dbPath: {{ mongodb_storage_dbpath }}
+  journal:
+    enabled: true
+#  engine:
+#  mmapv1:
+#  wiredTiger:
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+# network interfaces
+net:
+  port: {{ mongodb_net_port | int }}
+  bindIp: {{ mongodb_net_bindip }}
+  {% if mongodb_net_ssl_mode != "disabled" %}
+  ssl:
+    mode: {{ mongodb_net_ssl_mode }}
+    PEMKeyFile: {{ mongodb_net_ssl_pemkeyfile }}
+    {% if mongodb_net_ssl_cafile %}
+    CAFile: {{ mongodb_net_ssl_cafile }}
+    {% endif %}
+  {% endif %}
+
+# how the process runs
+processManagement:
+  timeZoneInfo: /usr/share/zoneinfo
+
+#security:
+security:
+  authorization: {{ mongodb_security_authorization }}
+
+#operationProfiling:
+
+#replication:
+
+#sharding:
+
+## Enterprise-Only Options:
+
+#auditLog:
+
+#snmp:

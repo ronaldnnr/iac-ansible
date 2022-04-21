@@ -1,0 +1,14 @@
+---
+  - name: Docker install playbook
+    hosts: "{{ target | default('all', true) }}"
+    become: yes
+    serial: 1
+
+    vars:
+      docker_registry_security: true
+
+    roles:
+      - common
+      - docker
+      - docker-registry
+

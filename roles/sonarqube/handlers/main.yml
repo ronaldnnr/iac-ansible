@@ -1,0 +1,7 @@
+---
+
+  - name: restart sonarqube
+    service:
+      name: sonarqube
+      state: restarted
+      enabled: yes

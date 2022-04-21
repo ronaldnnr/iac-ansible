@@ -1,0 +1,90 @@
+---
+
+  - name: Install apt-transport-https
+    apt:
+      name: apt-transport-https
+      state: latest
+    when:
+      - ansible_os_family == "Debian"
+    tags: logstash
+
+  - name: Installing JDK (RedHat)
+    yum:
+      name: "{{ item }}"
+    with_items:
+      - "{{ java_packages[ansible_os_family] }}"
+    when:
+      ansible_os_family == "RedHat"
+    tags: logstash
+
+  - name: Installing JDK (Debian)
+    apt:
+      name: "{{ item }}"
+    with_items:
+      - "{{ java_packages[ansible_os_family] }}"
+    when:
+      ansible_os_family == "Debian"
+    tags: logstash
+
+  - name: Install Elastic.co repository
+    yum_repository:
+      name: Elastic.co
+      description: Repository elastic.co for Enterprise Linux {{ ansible_distribution_version[:1] }}
+      baseurl: https://artifacts.elastic.co/packages/{{ logstash_version }}/yum
+      gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      gpgcheck: yes
+    when:
+      ansible_os_family == "RedHat"
+    tags: logstash
+
+  - name: Install Elastic.co repository public key
+    apt_key:
+      url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      state: present
+    when:
+      ansible_os_family == "Debian"
+    tags: logstash
+
+  - name: Install Elastic.co repository
+    apt_repository:
+      repo: deb https://artifacts.elastic.co/packages/{{ logstash_version }}/apt stable main
+      filename: elastic-{{ logstash_version }}.list
+      state: present
+      update_cache: yes
+    when:
+      ansible_os_family == "Debian"
+    tags: logstash
+
+  - name: Install Logstash package (Debian)
+    apt:
+      name: logstash
+      state: present
+      update_cache: yes
+    when:
+      ansible_os_family == "Debian"
+    tags: logstash
+
+  - name: Install Logstash package (RedHat)
+    yum:
+      name: logstash
+      state: present
+      update_cache: yes
+    when:
+      ansible_os_family == "RedHat"
+    tags: logstash
+
+  - name: Run system-install script
+    shell: /usr/share/logstash/bin/system-install
+    environment:
+      JAVA_HOME: /usr/lib/jvm/jre-openjdk/
+    when:
+      ansible_distribution == "CentOS"
+    tags: logstash
+
+  - name: Copy template configuration jvm.options
+    template:
+      src: jvm.options.j2
+      dest: /etc/logstash/jvm.options
+    notify:
+      - restart logstash
+    tags: logstash

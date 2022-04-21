@@ -1,0 +1,93 @@
+---
+# tasks file for gogs
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install git
+  package:
+    name: git
+    state: present
+    update_cache: yes
+
+- name: Ensure unzip is installed.
+  package: 
+    name: unzip 
+    state: present
+
+- name: Create user for Gogs.
+  user:
+    name: "{{ gogs_user }}"
+    comment: Gogs
+    home: "{{ gogs_user_home }}"
+
+- name: Check if Gogs is already installed.
+  stat: 
+    path: /usr/local/bin/gogs
+  register: gogs_bin
+
+- name: Download Gogs.
+  get_url:
+    url: "{{ gogs_binary_url }}"
+    dest: "{{ gogs_user_home }}/gogs.zip"
+    owner: "{{ gogs_user }}"
+    group: "{{ gogs_user }}"
+  when: gogs_bin.stat.islnk is not defined
+
+- name: Expand Gogs.
+  unarchive:
+    src: "{{ gogs_user_home }}/gogs.zip"
+    dest: "{{ gogs_user_home }}"
+    group: "{{ gogs_user }}"
+    owner: "{{ gogs_user }}"
+    copy: no
+  when: gogs_bin.stat.islnk is not defined
+
+- name: Make Gogs init script executable.
+  file:
+    path: "{{ gogs_user_home }}/{{ gogs_init_script_path }}"
+    mode: 0755
+
+- name: Symlink Gogs binary and startup scripts.
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - { src: "{{ gogs_user_home }}/gogs/gogs", dest: "/usr/local/bin/gogs" }
+    - { src: "{{ gogs_user_home }}/{{ gogs_init_script_path }}" , dest: "/etc/init.d/gogs" }
+  notify: gogs.service
+
+- name: "Create custom conf directory"
+  file: 
+    path: /home/git/gogs/custom/conf 
+    state: directory 
+    owner: git
+    group: git
+    mode: 0755
+    
+- name: Configure Gogs
+  template:
+    src: app.ini.j2
+    dest: /home/git/gogs/custom/conf/app.ini
+    owner: git
+    group: git
+    mode: 0644
+  notify: gogs.service
+
+- name: Create Gogs log folder.
+  file:
+    path: "/var/log/gogs"
+    state: directory
+    owner: "{{ gogs_user }}"
+    group: "{{ gogs_user }}"
+    mode: 0755
+  
+- name: Copy Gogs systemd unit file into place (for systemd systems).
+  template:
+    src: gogs.unit.j2
+    dest: /etc/systemd/system/gogs.service
+    owner: root
+    group: root
+    mode: 0755
+  notify: gogs.service
+  when: "ansible_service_mgr == 'systemd'"

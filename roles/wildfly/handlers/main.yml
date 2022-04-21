@@ -1,0 +1,11 @@
+---
+  - name: restart wildfly
+    service:
+      name: wildfly
+      state: restarted
+      enabled: yes
+
+  - name: fix permissions wildfly
+    command: "chown -R {{ wildfly_user }}:{{ wildfly_group }} {{ item }}"
+    with_items:
+      - "{{ wildfly_dest }}/wildfly/standalone/deployments/"
